@@ -11,6 +11,7 @@ import {
     View,
 } from 'react-native';
 import { auth, db } from '../../../config/firebaseConfig';
+import Fonts from '../../../utils/Fonts';
 
 const badWords = [
     'senha', '123456', 'password', 'admin', 'user',
@@ -131,7 +132,7 @@ export default function Cadastro({ navigation }) {
     return (
         <View style={styles.container}>
             <Image source={require('../../../../../assets/goatlogo.png')} style={styles.logo} />
-            <Text style={styles.mainTitle}>G.O.A.T</Text>
+            <Text style={styles.mainTitle}>GOAT</Text>
             <View style={styles.loginContainer}>
                 <Text style={styles.title}>Registrar</Text>
 
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
     },
     mainTitle: {
         fontSize: 32,
-        fontWeight: 'bold',
+        fontFamily: Fonts['poppins-bold'],
         color: 'white',
         marginBottom: 20,
         textAlign: 'center',
@@ -223,20 +224,24 @@ const styles = StyleSheet.create({
         marginBottom: 24,
         textAlign: 'center',
         color: 'white',
+        fontFamily: Fonts['poppins-bold']
     },
     input: {
-        height: 40,
+        height: 50,
         backgroundColor: '#A49A97',
         borderRadius: 5,
         marginBottom: 22,
         paddingHorizontal: 8,
         color: 'white',
         width: '100%',
-        fontSize: 14, // Tamanho da fonte reduzido para o campo username
+        fontSize: 14,
+        fontFamily: Fonts['poppins-regular']
     },
     errorText: {
         color: 'red',
-        marginBottom: 12,
+        marginBottom: 5,
+        marginTop: -15,
+        fontFamily: Fonts['poppins-regular']
     },
     button: {
         backgroundColor: '#C1644F',
@@ -249,6 +254,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         fontSize: 16,
+        fontFamily: Fonts['poppins-bold']
     },
     logo: {
         width: 170,
@@ -260,5 +266,6 @@ const styles = StyleSheet.create({
         textDecorationLine: 'underline',
         fontSize: 16,
         marginTop: 10,
+        fontFamily: Fonts['poppins-regular']
     },
 });

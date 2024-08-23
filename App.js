@@ -1,5 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
+import { StatusBar } from 'react-native';
 import 'react-native-gesture-handler';
 import fonts from './app/src/config/fonts';
 import Routes from './app/src/routes/Routes';
@@ -10,10 +11,13 @@ export default function App() {
   if (!fontsLoaded) {
     return null;
   }
+
   return (
-    <NavigationContainer>
-      <Routes />
-    </NavigationContainer>
+    <>
+      <StatusBar barStyle="light-content" backgroundColor="#000000" />
+      <NavigationContainer>
+        <Routes />
+      </NavigationContainer>
+    </>
   );
 }
-

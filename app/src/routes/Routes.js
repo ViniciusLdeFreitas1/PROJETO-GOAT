@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import React from 'react';
 import { StyleSheet } from 'react-native';
+
 import Home from '../screens/appScreens/Home/Home';
 import Perfil from '../screens/appScreens/Perfil/Perfil';
 import Players from '../screens/appScreens/Players/Players';
@@ -19,14 +20,14 @@ const Tab = createBottomTabNavigator();
 
 export default function Routes() {
     return (
-        <Stack.Navigator
-            screenOptions={{ headerShown: false }}
-        >
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+
             <Stack.Screen name="Splash" component={Splash} />
             <Stack.Screen name="Login" component={Login} />
             <Stack.Screen name="Cadastro" component={Cadastro} />
             <Stack.Screen name="RecuperarSenha" component={RecuperarSenha} />
             <Stack.Screen name="RoutesTab" component={RoutesTab} />
+
         </Stack.Navigator>
     );
 }
