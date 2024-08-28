@@ -176,13 +176,14 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     forgotPasswordContainer: {
-        alignItems: 'flex-end',
+        alignItems: 'center',
         marginTop: 10, // Ajuste a margem conforme necessário
     },
     forgotPasswordText: {
-        fontFamily: Fonts["poppins-semiBold"], // Fonte Poppins aplicada
+        fontFamily: Fonts["poppins-regular"], // Fonte Poppins aplicada
         fontSize: 14,
         color: '#fff',
+        textAlign: 'center',
     },
     linkText: {
         color: 'white',

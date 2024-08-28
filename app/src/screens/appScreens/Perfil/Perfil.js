@@ -1,6 +1,6 @@
 import { signOut } from 'firebase/auth';
 import React from 'react';
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
 import { auth } from '../../../config/firebaseConfig';
 
 export default function Perfil({ navigation }) {
@@ -20,7 +20,8 @@ export default function Perfil({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Perfil</Text>
+            <View style={styles.PerfilHeader}>
+            </View>
             <TouchableOpacity style={styles.button} onPress={handleLogout}>
                 <Text style={styles.buttonText}>Sair</Text>
             </TouchableOpacity>
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: 'white',
         marginBottom: 20,
-        fontFamily: 'Poppins-Bold', // Ajuste conforme suas fontes
+        fontFamily: 'Poppins-Bold',
     },
     button: {
         backgroundColor: '#C1644F',
@@ -51,6 +52,11 @@ const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         fontSize: 16,
-        fontFamily: 'Poppins-Bold', // Ajuste conforme suas fontes
+        fontFamily: 'Poppins-Bold',
     },
+    PerfilHeader: {
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+    }
 });
