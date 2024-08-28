@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     },
     mainTitle: {
         fontSize: 32,
-        fontFamily: Fonts['poppins-bold'], // Fonte Poppins aplicada
+        fontFamily: Fonts['poppins-bold'], 
         color: 'white',
         marginBottom: 20,
         textAlign: 'center',
@@ -132,21 +132,21 @@ const styles = StyleSheet.create({
         marginBottom: 24,
         textAlign: 'center',
         color: 'white',
-        fontFamily: Fonts['poppins-bold'], // Fonte Poppins aplicada
+        fontFamily: Fonts['poppins-bold'], 
     },
     inputContainer: {
         width: '100%',
-        paddingBottom: 20, // Ajuste o espaço inferior conforme necessário
+        paddingBottom: 20,
     },
     input: {
         height: 50,
         backgroundColor: '#A49A97',
         borderRadius: 5,
-        marginBottom: 10, // Margem entre campos de entrada
+        marginBottom: 10, 
         paddingHorizontal: 8,
         color: 'white',
         width: '100%',
-        fontFamily: Fonts['poppins-regular'], // Fonte Poppins aplicada
+        fontFamily: Fonts['poppins-regular'], 
     },
     errorContainer: {
         width: '100%',
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         fontSize: 16,
-        fontFamily: Fonts['poppins-bold'], // Fonte Poppins aplicada
+        fontFamily: Fonts['poppins-bold'], 
     },
     logo: {
         width: 170,
@@ -177,10 +177,10 @@ const styles = StyleSheet.create({
     },
     forgotPasswordContainer: {
         alignItems: 'center',
-        marginTop: 10, // Ajuste a margem conforme necessário
+        marginTop: 10, 
     },
     forgotPasswordText: {
-        fontFamily: Fonts["poppins-regular"], // Fonte Poppins aplicada
+        fontFamily: Fonts["poppins-regular"],
         fontSize: 14,
         color: '#fff',
         textAlign: 'center',
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
     linkText: {
         color: 'white',
         textDecorationLine: 'underline',
-        fontFamily: Fonts['poppins-regular'], // Fonte Poppins aplicada
+        fontFamily: Fonts['poppins-regular'],
         fontSize: 16,
         marginTop: 10,
     },
