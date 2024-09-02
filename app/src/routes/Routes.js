@@ -14,6 +14,7 @@ import Login from '../screens/auth/Login/Login';
 import RecuperarSenha from '../screens/auth/Login/RecuperarSenha/RecuperarSenha';
 import Splash from '../screens/splashScreens/Splash/Splash';
 import Fonts from '../utils/Fonts';
+import Seasons from '../screens/appScreens/Temporadas/seasons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -27,6 +28,7 @@ export default function Routes() {
             <Stack.Screen name="Cadastro" component={Cadastro} />
             <Stack.Screen name="RecuperarSenha" component={RecuperarSenha} />
             <Stack.Screen name="RoutesTab" component={RoutesTab} />
+            <Stack.Screen name="Temporadas" component={Seasons}/>
 
         </Stack.Navigator>
     );
