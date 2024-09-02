@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Image } from 'react-native';
 
 export default function Perfil() {
     return (
@@ -137,6 +137,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 20,
+        fontFamily: 'Poppins-Bold', // Ajuste conforme suas fontes
     },
     actionButton: {
         flex: 1,
@@ -184,4 +185,9 @@ const styles = StyleSheet.create({
         height: 100,
         borderRadius: 50,
     },
+    PerfilHeader: {
+        alignItems: 'center',
+        flexDirection: 'column',
+        justifyContent: 'flex-start',
+    }
 });
