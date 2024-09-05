@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     navbar: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#7D726F',
+        backgroundColor: '#65706C',
         padding: 10,
         position: 'relative',
     },

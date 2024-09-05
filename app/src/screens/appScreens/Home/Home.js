@@ -12,6 +12,7 @@ export default function Home({ navigation }) {
   const [profileImage, setProfileImage] = useState(DEFAULT_AVATAR);
   const [seasons, setSeasons] = useState([]);
 
+
   useEffect(() => {
     const fetchUsernameAndAvatar = async () => {
       try {
@@ -81,7 +82,7 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#5B5959",
+    backgroundColor: "#6E6570",
   },
   item: {
     padding: 10,
