@@ -88,9 +88,6 @@ const Navbar = ({ username, profileImage, setProfileImage, navigation }) => {
                             <Text style={styles.buttonText}>Carregar Avatar</Text>
                         </TouchableOpacity>
                         <View style={styles.separator} />
-                        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Profile')}>
-                            <Text style={styles.buttonText}>Ir para Perfil</Text>
-                        </TouchableOpacity>
                         <View style={styles.separator} />
                         <TouchableOpacity
                             style={styles.button}
