@@ -107,16 +107,6 @@ export default function Perfil({ navigation }) {
         <TouchableOpacity style={styles.menuButton}>
           <Text style={styles.menuText}>≡</Text>
         </TouchableOpacity>
-        <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Buscar"
-            placeholderTextColor="#888" 
-          />
-          <TouchableOpacity style={styles.searchIcon}>
-            <Text style={styles.searchIconText}>🔍</Text>
-          </TouchableOpacity>
-        </View>
         <TouchableOpacity style={styles.profileButton}>
           <Text style={styles.profileText}>👤</Text>
         </TouchableOpacity>
@@ -173,7 +163,7 @@ export default function Perfil({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: "#5B5959",
+    backgroundColor: "#54514F",
     padding: 20,
   },
   header: {
@@ -186,7 +176,7 @@ const styles = StyleSheet.create({
     width: 64, 
     height: 64, 
     padding: 10,
-    backgroundColor: "#333",
+    backgroundColor: "#7D7875",
     borderRadius: 2,
     justifyContent: "center", 
   },
@@ -194,37 +184,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 20,
     textAlign: 'center'
-  },
-  searchContainer: {
-    flex: 1, 
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#333",
-    padding: 10,
-    borderRadius: 5,
-    marginHorizontal: 10
-  },
-  searchInput: {
-    flex: 1,
-    color: "#fff",
-    fontSize: 16,
-    padding: 10,
-  },
-  searchIcon: {
-    padding: 10,
-    backgroundColor: "#444",
-    borderRadius: 5
-  },
-  searchIconText: {
-    color: "#fff",
-    fontSize: 20,
-
-  },
+  },  
   profileButton: {
     width: 64, 
     height: 64, 
     padding: 10,
-    backgroundColor: "#333",
+    backgroundColor: "#7D7875",
     borderRadius: 5,
     justifyContent: "center", 
   },
@@ -273,7 +238,7 @@ const styles = StyleSheet.create({
   actionButton: {
     flex: 1,
     padding: 10,
-    backgroundColor: "#333",
+    backgroundColor: "#7D7875",
     borderRadius: 5,
     alignItems: "center",
     margin: 5,
@@ -283,7 +248,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   button: {
-    backgroundColor: "#C1644F",
+    backgroundColor: "#F55900",
     padding: 10,
     borderRadius: 5,
     width: "80%",
@@ -298,7 +263,7 @@ const styles = StyleSheet.create({
   },
   player: {
     padding: 10,
-    backgroundColor: "#333",
+    backgroundColor: "#7D7875",
     borderRadius: 5,
   },
   playerImage: {
@@ -309,7 +274,7 @@ const styles = StyleSheet.create({
   },
   team: {
     padding: 10,
-    backgroundColor: "#333",
+    backgroundColor: "#7D7875",
     borderRadius: 5,
     marginBottom: 10,
   },

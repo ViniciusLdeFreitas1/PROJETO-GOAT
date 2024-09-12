@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     navbar: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#65706C',
+        backgroundColor: '#7D7875',
         padding: 10,
         position: 'relative',
     },
@@ -146,12 +146,12 @@ const styles = StyleSheet.create({
         padding: 10,
         marginHorizontal: 10,
         color: 'white',
-        backgroundColor: '#5B5959',
+        backgroundColor: '#A69F9C',
         borderRadius: 5,
     },
     orangeBar: {
         height: 4,
-        backgroundColor: 'orange',
+        backgroundColor: '#F55900',
     },
     modalBackground: {
         flex: 1,
