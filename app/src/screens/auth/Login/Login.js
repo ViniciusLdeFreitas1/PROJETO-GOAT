@@ -1,14 +1,19 @@
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react';
 import { Alert, Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import { auth } from '../../../config/firebaseConfig';
 import Fonts from '../../../utils/Fonts';
+import firebase from 'firebase/compat/app';
+
+
 
 export default function Login({ navigation }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const validate = () => {
         let valid = true;
@@ -35,7 +40,7 @@ export default function Login({ navigation }) {
                     console.log(user);
                     setEmail("");
                     setPassword("");
-                    Alert.alert('Login bem-sucedido', 'Bem-vindo de volta!');
+                    Alert.alert('Login bem-sucedido');
                     navigation.navigate("RoutesTab");
                 })
                 .catch((error) => {
@@ -52,6 +57,7 @@ export default function Login({ navigation }) {
             <View style={styles.loginContainer}>
                 <Text style={styles.title}>Login</Text>
                 <View style={styles.inputContainer}>
+                    <FontAwesome name="envelope" size={20} color="#ccc" style={styles.inputIcon} />
                     <TextInput
                         style={styles.input}
                         onChangeText={setEmail}
@@ -61,40 +67,44 @@ export default function Login({ navigation }) {
                         autoCapitalize="none"
                         keyboardType="email-address"
                     />
-                    <View style={styles.errorContainer}>
-                        {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
-                    </View>
+                </View>
+                {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
+                <View style={styles.inputContainer}>
+                    <FontAwesome name="lock" size={20} color="#ccc" style={styles.inputIcon} />
                     <TextInput
                         style={styles.input}
                         onChangeText={setPassword}
                         value={password}
                         placeholder="Senha"
                         placeholderTextColor="#ccc"
-                        secureTextEntry
+                        secureTextEntry={!showPassword}
                     />
-                    <View style={styles.forgotPasswordContainer}>
-                        <TouchableOpacity onPress={() => navigation.navigate("RecuperarSenha")}>
-                            <Text style={styles.forgotPasswordText}>
-                                Esqueceu sua senha?
-                            </Text>
-                        </TouchableOpacity>
-                    </View>
+                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.icon}>
+                        <FontAwesome
+                            name={showPassword ? 'eye' : 'eye-slash'}
+                            size={20}
+                            color="#C1644F"
+                        />
+                    </TouchableOpacity>
                 </View>
-                {passwordError ? (
-                    <Text style={styles.errorText}>{passwordError}</Text>
-                ) : null}
+                {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+
+                <View style={styles.forgotPasswordContainer}>
+                    <TouchableOpacity onPress={() => navigation.navigate("RecuperarSenha")}>
+                        <Text style={styles.forgotPasswordText}>
+                            Esqueceu sua senha?
+                        </Text>
+                    </TouchableOpacity>
+                </View>
 
                 <TouchableOpacity style={styles.button} onPress={handleLogin}>
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
 
-                <Text
-                    style={styles.linkText}
-                    onPress={() => navigation.navigate('Cadastro')}
-                >
-                    Registre-se
-                </Text>
+                <TouchableOpacity onPress={() => navigation.navigate('Cadastro')}>
+                        <Text style={styles.linkText}>Registre-se</Text>
+                    </TouchableOpacity>
             </View>
         </View>
     );
@@ -122,7 +132,7 @@ const styles = StyleSheet.create({
     },
     mainTitle: {
         fontSize: 32,
-        fontFamily: Fonts['poppins-bold'], 
+        fontFamily: Fonts['poppins-bold'],
         color: 'white',
         marginBottom: 20,
         textAlign: 'center',
@@ -132,30 +142,35 @@ const styles = StyleSheet.create({
         marginBottom: 24,
         textAlign: 'center',
         color: 'white',
-        fontFamily: Fonts['poppins-bold'], 
+        fontFamily: Fonts['poppins-bold'],
     },
     inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         width: '100%',
-        paddingBottom: 20,
-    },
-    input: {
-        height: 50,
+        marginBottom: 22,
         backgroundColor: '#A49A97',
         borderRadius: 5,
-        marginBottom: 10, 
+    },
+    input: {
+        flex: 1,
+        height: 50,
         paddingHorizontal: 8,
         color: 'white',
-        width: '100%',
-        fontFamily: Fonts['poppins-regular'], 
+        fontSize: 14,
+        fontFamily: Fonts['poppins-regular'],
     },
-    errorContainer: {
-        width: '100%',
-        alignItems: 'center', // Centraliza o texto de erro
-        marginBottom: 12,
+    inputIcon: {
+        padding: 10,
+    },
+    icon: {
+        padding: 10,
     },
     errorText: {
         color: 'red',
-        fontFamily: Fonts['poppins-regular'], // Fonte Poppins aplicada
+        marginBottom: 5,
+        marginTop: -15,
+        fontFamily: Fonts['poppins-regular'],
     },
     button: {
         backgroundColor: '#C1644F',
@@ -168,7 +183,7 @@ const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         fontSize: 16,
-        fontFamily: Fonts['poppins-bold'], 
+        fontFamily: Fonts['poppins-bold'],
     },
     logo: {
         width: 170,
@@ -177,7 +192,8 @@ const styles = StyleSheet.create({
     },
     forgotPasswordContainer: {
         alignItems: 'center',
-        marginTop: 10, 
+        marginTop: 10,
+        marginBottom: 10,
     },
     forgotPasswordText: {
         fontFamily: Fonts["poppins-regular"],

@@ -1,6 +1,6 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Alert,
     Image,
@@ -10,15 +10,16 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import { auth, db } from '../../../config/firebaseConfig';
 import Fonts from '../../../utils/Fonts';
+import Login from '../Login/Login';
 
 const badWords = [
     'senha', '123456', 'password', 'admin', 'user',
-
 ];
 
-export default function Cadastro({ navigation }) {
+export default function Component() {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -27,28 +28,56 @@ export default function Cadastro({ navigation }) {
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [confirmPasswordError, setConfirmPasswordError] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isUsernameValid, setIsUsernameValid] = useState(false);
+    const [usernameBlurred, setUsernameBlurred] = useState(false);
+
+
 
     const isValidUsername = (username) => {
-        // Permitir apenas letras, números e sublinhados
         const regex = /^[a-zA-Z0-9_]+$/;
         return regex.test(username);
     };
 
     const isBadWord = (word) => {
-        // Checa se a palavra é uma palavra de baixo calão
         return badWords.includes(word.toLowerCase());
     };
 
     const isValidEmail = (email) => {
-        // Regex básica para validação de email
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
     };
 
+    const validateUsername = (username) => {
+        if (username === '' && usernameBlurred) {
+            setUsernameError('O nome de usuário é obrigatório.');
+            setIsUsernameValid(false);
+        } else if (username.length > 0 && username.length < 7) {
+            setUsernameError('O nome de usuário deve ter pelo menos 7 caracteres.');
+            setIsUsernameValid(false);
+        } else if (username.length > 0 && !isValidUsername(username)) {
+            setUsernameError('O nome de usuário só pode conter letras, números e sublinhados.');
+            setIsUsernameValid(false);
+        } else if (username.length > 0 && isBadWord(username)) {
+            setUsernameError('O nome de usuário é muito comum ou inapropriado.');
+            setIsUsernameValid(false);
+        } else if (username.length >= 7) {
+            setUsernameError('');
+            setIsUsernameValid(true);
+        } else {
+            setUsernameError('');
+            setIsUsernameValid(false);
+        }
+    };
+
+    useEffect(() => {
+        validateUsername(username);
+    }, [username, usernameBlurred]);
+
     const validate = () => {
         let valid = true;
 
-        // Validar email
         if (email === '') {
             setEmailError('Isto é obrigatório.');
             valid = false;
@@ -59,7 +88,6 @@ export default function Cadastro({ navigation }) {
             setEmailError('');
         }
 
-        // Validar senha
         if (password === '') {
             setPasswordError('Isto é obrigatório.');
             valid = false;
@@ -73,24 +101,11 @@ export default function Cadastro({ navigation }) {
             setPasswordError('');
         }
 
-        // Validar nome de usuário
-        if (username === '') {
-            setUsernameError('Isto é obrigatório.');
+        validateUsername(username);
+        if (usernameError || username === '') {
             valid = false;
-        } else if (username.length < 7) {
-            setUsernameError('O nome de usuário deve ter pelo menos 7 caracteres.');
-            valid = false;
-        } else if (!isValidUsername(username)) {
-            setUsernameError('O nome de usuário só pode conter letras, números e sublinhados.');
-            valid = false;
-        } else if (isBadWord(username)) {
-            setUsernameError('O nome de usuário é muito comum ou inapropriado.');
-            valid = false;
-        } else {
-            setUsernameError('');
         }
 
-        // Validar confirmação de senha
         if (confirmpassword === '') {
             setConfirmPasswordError('Isto é obrigatório.');
             valid = false;
@@ -118,7 +133,8 @@ export default function Cadastro({ navigation }) {
                     setUsername('');
                     setEmail('');
                     setPassword('');
-                    navigation.navigate('Login');
+                    setConfirmPassword('');
+                    // navigation.navigate('Login');
                 })
                 .catch((error) => {
                     const errorMessage = error.message;
@@ -127,8 +143,6 @@ export default function Cadastro({ navigation }) {
         }
     };
 
-
-
     return (
         <View style={styles.container}>
             <Image source={require('../../../../../assets/goatlogo.png')} style={styles.logo} />
@@ -136,57 +150,97 @@ export default function Cadastro({ navigation }) {
             <View style={styles.loginContainer}>
                 <Text style={styles.title}>Registrar</Text>
 
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setUsername}
-                    value={username}
-                    placeholder="Username"
-                    placeholderTextColor="#ccc"
-                    autoCapitalize="none"
-                    keyboardType="default"
-                />
+                <View style={styles.inputContainer}>
+                    <FontAwesome name="user" size={20} color="#ccc" style={styles.inputIcon} />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={(text) => {
+                            setUsername(text);
+                        }}
+                        onBlur={() => setUsernameBlurred(true)}
+                        value={username}
+                        placeholder="Username"
+                        placeholderTextColor="#ccc"
+                        autoCapitalize="none"
+                        keyboardType="default"
+                    />
+                    {username.length > 0 && (
+                        <FontAwesome
+                            name={isUsernameValid ? 'check-circle' : 'times-circle'}
+                            size={20}
+                            color={isUsernameValid ? 'green' : 'red'}
+                            style={styles.icon}
+                        />
+                    )}
+                </View>
                 {usernameError ? <Text style={styles.errorText}>{usernameError}</Text> : null}
 
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setEmail}
-                    value={email}
-                    placeholder="Email"
-                    placeholderTextColor="#ccc"
-                    autoCapitalize="none"
-                    keyboardType="email-address"
-                />
+                <View style={styles.inputContainer}>
+                    <FontAwesome name="envelope" size={20} color="#ccc" style={styles.inputIcon} />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setEmail}
+                        value={email}
+                        placeholder="Email"
+                        placeholderTextColor="#ccc"
+                        autoCapitalize="none"
+                        keyboardType="email-address"
+                    />
+                </View>
                 {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
 
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setPassword}
-                    value={password}
-                    placeholder="Senha"
-                    placeholderTextColor="#ccc"
-                    secureTextEntry
-                />
+                <View style={styles.inputContainer}>
+                    <FontAwesome name="lock" size={20} color="#ccc" style={styles.inputIcon} />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setPassword}
+                        value={password}
+                        placeholder="Senha"
+                        placeholderTextColor="#ccc"
+                        secureTextEntry={!showPassword}
+                    />
+                    <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.icon}>
+                        <FontAwesome
+                            name={showPassword ? 'eye' : 'eye-slash'}
+                            size={20}
+                            color="#C1644F"
+                        />
+                    </TouchableOpacity>
+                </View>
                 {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
 
-                <TextInput
-                    style={styles.input}
-                    onChangeText={setConfirmPassword}
-                    value={confirmpassword}
-                    placeholder="Confirm Password"
-                    placeholderTextColor="#ccc"
-                    secureTextEntry
-                />
+                <View style={styles.inputContainer}>
+                    <FontAwesome name="lock" size={20} color="#ccc" style={styles.inputIcon} />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setConfirmPassword}
+                        value={confirmpassword}
+                        placeholder="Confirm Password"
+                        placeholderTextColor="#ccc"
+                        secureTextEntry={!showConfirmPassword}
+                    />
+                    <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)} style={styles.icon}>
+                        <FontAwesome
+                            name={showConfirmPassword ? 'eye' : 'eye-slash'}
+                            size={20}
+                            color="#C1644F"
+                        />
+                    </TouchableOpacity>
+                </View>
                 {confirmPasswordError ? <Text style={styles.errorText}>{confirmPasswordError}</Text> : null}
 
                 <TouchableOpacity style={styles.button} onPress={handleCadastro}>
                     <Text style={styles.buttonText}>Registrar</Text>
                 </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => navigation.navigate(Login)}>
                 <Text
                     style={styles.linkText}
-                    onPress={() => navigation.navigate('Login')}
+                    
                 >
                     Logar
                 </Text>
+                </TouchableOpacity>
             </View>
         </View>
     );
@@ -226,16 +280,27 @@ const styles = StyleSheet.create({
         color: 'white',
         fontFamily: Fonts['poppins-bold']
     },
-    input: {
-        height: 50,
+    inputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        width: '100%',
+        marginBottom: 22,
         backgroundColor: '#A49A97',
         borderRadius: 5,
-        marginBottom: 22,
+    },
+    input: {
+        flex: 1,
+        height: 50,
         paddingHorizontal: 8,
         color: 'white',
-        width: '100%',
         fontSize: 14,
         fontFamily: Fonts['poppins-regular']
+    },
+    inputIcon: {
+        padding: 10,
+    },
+    icon: {
+        padding: 10,
     },
     errorText: {
         color: 'red',

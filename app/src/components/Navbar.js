@@ -1,60 +1,85 @@
-import { AntDesign } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useState } from 'react';
-import { Alert, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native';
+import { AntDesign } from '@expo/vector-icons';
 import { launchImageLibrary } from 'react-native-image-picker';
+import { signOut } from 'firebase/auth';
+import { auth } from '../config/firebaseConfig';
+import { useNavigation } from '@react-navigation/native';
+import { useUser } from '../components/UserContext';
 
 const BUTTON_COLOR = '#C1644F';
 
-const Navbar = ({ username, profileImage, setProfileImage, navigation }) => {
+const Navbar = () => {
     const [modalVisible, setModalVisible] = useState(false);
     const [imageURL, setImageURL] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
+    const [loading, setLoading] = useState(false);
+    const navigation = useNavigation();
+    const { userData, updateUserData } = useUser();
 
     const openImagePicker = () => {
         launchImageLibrary({ mediaType: 'photo' }, async (response) => {
             if (response.assets && response.assets.length > 0) {
                 const uri = response.assets[0].uri;
-                setProfileImage(uri);
-                await AsyncStorage.setItem('profileImage', uri);
-                setModalVisible(false);
+                await updateProfileImage(uri);
             }
         });
     };
 
+    const updateProfileImage = async (uri) => {
+        setLoading(true);
+        try {
+            await updateUserData({ profileImage: uri });
+            setModalVisible(false);
+            Alert.alert('Sucesso', 'Imagem de perfil atualizada com sucesso.');
+        } catch (error) {
+            console.error('Error updating profile image:', error);
+            Alert.alert('Erro', 'Falha ao atualizar a imagem de perfil.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleImageURLSubmit = async () => {
-        setProfileImage(imageURL);
-        await AsyncStorage.setItem('profileImage', imageURL);
-        setModalVisible(false);
+        if (!imageURL.trim()) {
+            Alert.alert('Erro', 'Por favor, insira uma URL válida.');
+            return;
+        }
+        await updateProfileImage(imageURL);
     };
 
     const handleLogout = async () => {
+        setLoading(true);
         try {
-            console.log('Iniciando processo de logout...');
-
-            await AsyncStorage.removeItem('username');
-            await AsyncStorage.removeItem('profileImage');
-            await AsyncStorage.removeItem('authToken');
-
-            navigation.reset({
-                index: 0,
-                routes: [{ name: 'Login' }],
-            });
-
-            console.log('Logout concluído e navegação atualizada.');
+            await signOut(auth);
+            await updateUserData({ username: '', email: '', profileImage: '' });
+            Alert.alert('Logout', 'Você foi desconectado com sucesso.');
+            navigation.navigate('Login');
         } catch (error) {
-            console.error('Falha ao fazer logout', error);
+            console.error('Error signing out:', error);
+            Alert.alert('Erro', 'Ocorreu um erro ao tentar fazer logout.');
+        } finally {
+            setLoading(false);
         }
+    };
+
+    const handleProfilePress = () => {
+        navigation.navigate('Perfil');
     };
 
     return (
         <View>
             <View style={styles.navbar}>
-                <Image source={{ uri: profileImage }} style={styles.profileImage} />
-                <Text style={styles.username}>{username || 'Usuário'}</Text>
+                <TouchableOpacity onPress={handleProfilePress}>
+                    <Image 
+                        source={{ uri: userData.profileImage || 'https://via.placeholder.com/40' }} 
+                        style={styles.profileImage} 
+                    />
+                </TouchableOpacity>
                 <TextInput
                     style={styles.searchInput}
                     placeholder="Buscar..."
+                    placeholderTextColor="#ccc"
                     value={searchQuery}
                     onChangeText={setSearchQuery}
                 />
@@ -81,6 +106,7 @@ const Navbar = ({ username, profileImage, setProfileImage, navigation }) => {
                         <TextInput
                             style={styles.urlInput}
                             placeholder="Cole a URL da imagem aqui"
+                            placeholderTextColor="#ccc"
                             value={imageURL}
                             onChangeText={setImageURL}
                         />
@@ -88,25 +114,8 @@ const Navbar = ({ username, profileImage, setProfileImage, navigation }) => {
                             <Text style={styles.buttonText}>Carregar Avatar</Text>
                         </TouchableOpacity>
                         <View style={styles.separator} />
-                        <View style={styles.separator} />
-                        <TouchableOpacity
-                            style={styles.button}
-                            onPress={() => Alert.alert(
-                                "Confirmar Logout",
-                                "Você tem certeza que deseja sair?",
-                                [
-                                    {
-                                        text: "Cancelar",
-                                        style: "cancel",
-                                    },
-                                    {
-                                        text: "OK",
-                                        onPress: handleLogout,
-                                    },
-                                ]
-                            )}
-                        >
-                            <Text style={styles.buttonText}>Logout</Text>
+                        <TouchableOpacity style={styles.button} onPress={handleLogout}>
+                            <Text style={styles.buttonText}>Sair</Text>
                         </TouchableOpacity>
                         <View style={styles.buttonSeparator} />
                         <TouchableOpacity style={styles.button} onPress={() => setModalVisible(false)}>
@@ -115,6 +124,12 @@ const Navbar = ({ username, profileImage, setProfileImage, navigation }) => {
                     </View>
                 </View>
             </Modal>
+
+            {loading && (
+                <View style={styles.loadingOverlay}>
+                    <ActivityIndicator size="large" color={BUTTON_COLOR} />
+                </View>
+            )}
         </View>
     );
 };
@@ -131,12 +146,6 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        marginRight: 10,
-    },
-    username: {
-        flex: 1,
-        fontSize: 18,
-        color: 'white',
         marginRight: 10,
     },
     searchInput: {
@@ -189,9 +198,16 @@ const styles = StyleSheet.create({
     buttonText: {
         color: 'white',
         fontSize: 16,
+        textAlign: 'center',
     },
     buttonSeparator: {
         height: 10,
+    },
+    loadingOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 
