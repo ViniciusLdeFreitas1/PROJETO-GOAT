@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, FlatList, Text, View } from "react-native";
 import axios from "axios";
 import Navbar from "../../../components/Navbar";
-import { fetchSeasons } from "../../../services/api";
+import { fetchSeasons } from "../../../services/seasons/api";
 
 const DEFAULT_AVATAR =
   "https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/71201981163c1c1753fc67cb4c3944db";

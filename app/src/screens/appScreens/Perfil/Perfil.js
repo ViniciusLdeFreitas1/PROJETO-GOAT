@@ -1,44 +1,27 @@
-// Perfil.js
-import React from 'react';
+import React, { useState, useEffect } from "react";
+import { signOut } from "firebase/auth";
+import { auth } from "../../../config/firebaseConfig";
+import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert, StyleSheet, Text, TouchableOpacity, View, Image, ScrollView } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
 import { useUser } from '../../../components/UserContext';
 
-export default async function Perfil({ navigation }) {
-    const { userData, updateUserData } = useUser();
 
-    useEffect(() => {
-        (async () => {
-            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-            if (status !== 'granted') {
-                Alert.alert('Permissão necessária', 'Precisamos de acesso à sua galeria para você poder selecionar uma foto de perfil.');
-            }
-        })();
-    }, []);
+export default function Perfil({ navigation }) {
+  const { userData, updateUserData } = useUser();
 
-    const handleLogout = () => {
-        signOut(auth)
-            .then(() => {
-                Alert.alert('Logout', 'Você foi desconectado com sucesso.');
-                navigation.navigate('Login');
-            })
-            .catch((error) => {
-                Alert.alert('Erro', 'Ocorreu um erro ao tentar fazer logout.');
-            });
-    };
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 4],
-      quality: 1,
-    });
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 4],
+            quality: 1,
+        });
 
         if (!result.canceled) {
             const selectedImageUri = result.assets[0].uri;
-            try  {
+            try {
                 await updateUserData({ profileImage: selectedImageUri });
                 Alert.alert('Sucesso', 'Imagem de perfil atualizada com sucesso.');
             } catch (error) {
@@ -92,148 +75,143 @@ export default async function Perfil({ navigation }) {
             </View>
         </ScrollView>
     );
-
+}
 
 const styles = StyleSheet.create({
-    container: {
-        flexGrow: 1,
-        backgroundColor: '#5B5959',
-        padding: 20,
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 20,
-    },
-    menuButton: {
-        padding: 10,
-        backgroundColor: '#333',
-        borderRadius: 5,
-    },
-    searchContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#333',
-        padding: 10,
-        borderRadius: 5,
-        flex: 1,
-        margin: 20,
-    },
-    searchInput: {
-        flex: 1,
-        color: '#fff',
-        fontSize: 16,
-        padding: 10,
-    },
-    searchIcon: {
-        padding: 10,
-        backgroundColor: '#444',
-        borderRadius: 5,
-    },
-    profileButton: {
-        padding: 10,
-        backgroundColor: '#333',
-        borderRadius: 5,
-    },
-    profile: {
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    profileImage: {
-        width: 150,
-        height: 150,
-        borderRadius: 75,
-        resizeMode: 'cover',
-    },
-    placeholder: {
-        width: 150,
-        height: 150,
-        borderRadius: 75,
-        backgroundColor: '#C1644F',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    placeholderText: {
-        color: 'white',
-        fontFamily: 'Poppins-Bold',
-    },
-    profileName: {
-        color: '#fff',
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginTop: 10,
-    },
-    profileEmail: {
-        color: '#fff',
-        fontSize: 16,
-        marginTop: 5,
-    },
-    actions: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 20,
-    },
-    actionButton: {
-        flex: 1,
-        padding: 10,
-        backgroundColor: '#333',
-        borderRadius: 5,
-        alignItems: 'center',
-        margin: 5,
-    },
-    actionButtonText: {
-        color: '#fff',
-        fontSize: 18,
-    },
-    button: {
-        backgroundColor: '#C1644F',
-        padding: 10,
-        borderRadius: 5,
-        width: '80%',
-        alignItems: 'center',
-        marginTop: 20,
-        alignSelf: 'center',
-    },
-    buttonText: {
-        color: 'white',
-        fontSize: 16,
-        fontFamily: 'Poppins-Bold',
-    },
-    player: {
-        padding: 10,
-        backgroundColor: '#333',
-        borderRadius: 5,
-    },
-    playerImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        resizeMode: 'cover',
-    },
-    team: {
-        padding: 10,
-        backgroundColor: '#333',
-        borderRadius: 5,
-        marginBottom: 10,
-    },
-    teamImage: {
-        width: 100,
-        height: 100,
-        resizeMode: 'cover',
-    },
-    sections: {
-        marginBottom: 20,
-    },
-    sectionTitle: {
-        color: '#fff',
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    sectionSubtitle: {
-        color: '#fff',
-        fontSize: 18,
-        marginBottom: 10,
-    },
+  container: {
+    flexGrow: 1,
+    backgroundColor: "#54514F",
+    padding: 20,
+  },
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between", 
+    marginBottom: 20,
+  },
+  menuButton: {
+    width: 64, 
+    height: 64, 
+    padding: 10,
+    backgroundColor: "#7D7875",
+    borderRadius: 2,
+    justifyContent: "center", 
+  },
+  menuText: {
+    color: "#fff",
+    fontSize: 20,
+    textAlign: 'center'
+  },  
+  profileButton: {
+    width: 64, 
+    height: 64, 
+    padding: 10,
+    backgroundColor: "#7D7875",
+    borderRadius: 5,
+    justifyContent: "center", 
+  },
+  profileText: {
+    color: "#fff",
+    fontSize: 20,
+  },
+  profile: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  profileImage: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    resizeMode: "cover",
+  },
+  placeholder: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: "#C1644F",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  placeholderText: {
+    color: "white",
+    fontFamily: "Poppins-Bold",
+  },
+  profileName: {
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "bold",
+    marginTop: 10,
+  },
+  profileEmail: {
+    color: "#fff",
+    fontSize: 16,
+    marginTop: 5,
+  },
+  actions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 20,
+  },
+  actionButton: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: "#7D7875",
+    borderRadius: 5,
+    alignItems: "center",
+    margin: 5,
+  },
+  actionButtonText: {
+    color: "#fff",
+    fontSize: 18,
+  },
+  button: {
+    backgroundColor: "#F55900",
+    padding: 10,
+    borderRadius: 5,
+    width: "80%",
+    alignItems: "center",
+    marginTop: 20,
+    marginLeft: 30,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+    fontFamily: "Poppins-Bold",
+  },
+  player: {
+    padding: 10,
+    backgroundColor: "#7D7875",
+    borderRadius: 5,
+  },
+  playerImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    resizeMode: "cover",
+  },
+  team: {
+    padding: 10,
+    backgroundColor: "#7D7875",
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  teamImage: {
+    width: 100,
+    height: 100,
+    resizeMode: "cover",
+  },
+  sections: {
+    marginBottom: 20,
+  },
+  sectionTitle: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  sectionSubtitle: {
+    color: "#fff",
+    fontSize: 18,
+    marginBottom: 10,
+  },
 });
