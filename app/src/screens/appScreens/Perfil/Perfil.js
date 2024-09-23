@@ -5,20 +5,40 @@ import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons';
 import { useUser } from '../../../components/UserContext';
 
-export default function Perfil({ navigation }) {
+export default async function Perfil({ navigation }) {
     const { userData, updateUserData } = useUser();
 
-    const pickImage = async () => {
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 4],
-            quality: 1,
-        });
+    useEffect(() => {
+        (async () => {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+                Alert.alert('Permissão necessária', 'Precisamos de acesso à sua galeria para você poder selecionar uma foto de perfil.');
+            }
+        })();
+    }, []);
+
+    const handleLogout = () => {
+        signOut(auth)
+            .then(() => {
+                Alert.alert('Logout', 'Você foi desconectado com sucesso.');
+                navigation.navigate('Login');
+            })
+            .catch((error) => {
+                Alert.alert('Erro', 'Ocorreu um erro ao tentar fazer logout.');
+            });
+    };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 4],
+      quality: 1,
+    });
 
         if (!result.canceled) {
             const selectedImageUri = result.assets[0].uri;
-            try {
+            try  {
                 await updateUserData({ profileImage: selectedImageUri });
                 Alert.alert('Sucesso', 'Imagem de perfil atualizada com sucesso.');
             } catch (error) {
@@ -72,7 +92,7 @@ export default function Perfil({ navigation }) {
             </View>
         </ScrollView>
     );
-}
+
 
 const styles = StyleSheet.create({
     container: {

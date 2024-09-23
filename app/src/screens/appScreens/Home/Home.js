@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, FlatList, Text, View } from "react-native";
 import axios from "axios";
 import Navbar from "../../../components/Navbar";
+import { fetchSeasons } from "../../../services/api";
 
 const DEFAULT_AVATAR =
   "https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/71201981163c1c1753fc67cb4c3944db";
@@ -11,6 +12,7 @@ export default function Home({ navigation }) {
   const [username, setUsername] = useState("");
   const [profileImage, setProfileImage] = useState(DEFAULT_AVATAR);
   const [seasons, setSeasons] = useState([]);
+
 
   useEffect(() => {
     const fetchUsernameAndAvatar = async () => {
@@ -34,27 +36,18 @@ export default function Home({ navigation }) {
         );
       }
     };
-
-    const fetchSeasons = async () => {
-      const options = {
-        method: "GET",
-        url: "https://api-nba-v1.p.rapidapi.com/seasons",
-        headers: {
-          "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
-          "x-rapidapi-host": "api-basketball.p.rapidapi.com",
-        },
-      };
-
+    const getSeasons = async () => {
       try {
-        const response = await axios.request(options);
-        setSeasons(response.data.response); 
-      } catch (error) {
-        console.error("Falha ao buscar as temporadas", error);
+        const data = await fetchSeasons();
+        setSeasons(data);
       }
-    };
+      catch(error){
+        console.error("Erro ao carregar as temporadas", error)
+      }
+    }
 
     fetchUsernameAndAvatar();
-    fetchSeasons();
+    getSeasons();
   }, []);
 
   return (
@@ -81,7 +74,7 @@ export default function Home({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#5B5959",
+    backgroundColor: "#54514F",
   },
   item: {
     padding: 10,
