@@ -252,10 +252,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 16,
-        backgroundColor: '#5B5959',
+        backgroundColor: '#666360',
     },
     loginContainer: {
-        backgroundColor: '#7D726F',
+        backgroundColor: '#868382',
         borderRadius: 10,
         padding: 20,
         shadowColor: '#3F3B39',
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         marginBottom: 22,
-        backgroundColor: '#A49A97',
+        backgroundColor: '#A59F9D',
         borderRadius: 5,
     },
     input: {
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
         fontFamily: Fonts['poppins-regular']
     },
     button: {
-        backgroundColor: '#C1644F',
+        backgroundColor: '#F56D09',
         padding: 10,
         borderRadius: 5,
         marginTop: 10,
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     linkText: {
         color: 'white',
         textDecorationLine: 'underline',
-        fontSize: 16,
+        fontSize: 14,
         marginTop: 10,
         fontFamily: Fonts['poppins-regular']
     },

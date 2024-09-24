@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 16,
-        backgroundColor: '#5B5959',
+        backgroundColor: '#666360',
     },
     logo: {
         width: 150,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     recoverContainer: {
-        backgroundColor: '#7D726F',
+        backgroundColor: '#868382',
         borderRadius: 10,
         padding: 20,
         shadowColor: '#3F3B39',
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 50,
-        backgroundColor: '#A49A97',
+        backgroundColor: '#A59F9D',
         borderRadius: 5,
         marginBottom: 20,
         paddingHorizontal: 8,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
         fontFamily: Fonts['poppins-regular'],
     },
     button: {
-        backgroundColor: '#C1644F',
+        backgroundColor: '#F56D09',
         padding: 10,
         borderRadius: 5,
         marginTop: 10,

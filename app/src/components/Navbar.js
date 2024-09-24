@@ -7,7 +7,7 @@ import { auth } from '../config/firebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import { useUser } from '../components/UserContext';
 
-const BUTTON_COLOR = '#C1644F';
+const BUTTON_COLOR = '#F56D09';
 
 const Navbar = () => {
     const [modalVisible, setModalVisible] = useState(false);
