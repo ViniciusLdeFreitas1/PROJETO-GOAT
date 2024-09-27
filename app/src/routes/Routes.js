@@ -7,7 +7,7 @@ import { StyleSheet } from 'react-native';
 import Home from '../screens/appScreens/Home/Home';
 import Perfil from '../screens/appScreens/Perfil/Perfil';
 import Players from '../screens/appScreens/Players/Players';
-import Times from '../screens/appScreens/Times/Times';
+import Jogos from '../screens/appScreens/Jogos/Jogos';
 import Transferencia from '../screens/appScreens/Transferencia/Transferencia';
 import Cadastro from '../screens/auth/Cadastro/Cadastro';
 import Login from '../screens/auth/Login/Login';
@@ -81,8 +81,8 @@ function RoutesTab() {
                 component={Players}
             />
             <Tab.Screen
-                name="Times"
-                component={Times}
+                name="Jogos"
+                component={Jogos}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <AntDesign
