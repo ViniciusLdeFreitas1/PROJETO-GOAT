@@ -16,6 +16,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome } from '@expo/vector-icons';
 import { useUser } from '../../../components/UserContext';
 
+
 export default function Perfil({ navigation }) {
   const { userData, updateUserData } = useUser();
   const [profileImage, setProfileImage] = useState(userData.profileImage || '');

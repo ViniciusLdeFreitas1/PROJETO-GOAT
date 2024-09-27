@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
         color: 'white',
         textDecorationLine: 'underline',
         fontFamily: Fonts['poppins-regular'],
-        fontSize: 16,
+        fontSize: 14,
         marginTop: 10,
     },
 });

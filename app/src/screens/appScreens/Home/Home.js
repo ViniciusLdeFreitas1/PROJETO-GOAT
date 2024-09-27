@@ -11,6 +11,7 @@ export default function Home({ navigation }) {
   const [username, setUsername] = useState("");
   const [profileImage, setProfileImage] = useState(DEFAULT_AVATAR);
 
+
   useEffect(() => {
     const fetchUsernameAndAvatar = async () => {
       try {
