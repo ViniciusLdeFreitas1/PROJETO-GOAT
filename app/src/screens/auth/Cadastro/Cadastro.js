@@ -252,10 +252,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 16,
-        backgroundColor: '#54514F',
+        backgroundColor: '#666360',
     },
     loginContainer: {
-        backgroundColor: '#7D7875',
+        backgroundColor: '#868382',
         borderRadius: 10,
         padding: 20,
         shadowColor: '#3F3B39',
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         marginBottom: 22,
-        backgroundColor: '#A69F9C',
+        backgroundColor: '#A59F9D',
         borderRadius: 5,
     },
     input: {
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
         fontFamily: Fonts['poppins-regular']
     },
     button: {
-        backgroundColor: '#F55900',
+        backgroundColor: '#F56D09',
         padding: 10,
         borderRadius: 5,
         marginTop: 10,

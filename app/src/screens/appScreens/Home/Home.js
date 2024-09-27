@@ -1,9 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, FlatList, Text, View } from "react-native";
-import axios from "axios";
 import Navbar from "../../../components/Navbar";
-import { fetchSeasons } from "../../../services/seasons/api";
+import Fonts from "../../../utils/Fonts";
 
 const DEFAULT_AVATAR =
   "https://snack-code-uploads.s3.us-west-1.amazonaws.com/~asset/71201981163c1c1753fc67cb4c3944db";
@@ -11,7 +10,6 @@ const DEFAULT_AVATAR =
 export default function Home({ navigation }) {
   const [username, setUsername] = useState("");
   const [profileImage, setProfileImage] = useState(DEFAULT_AVATAR);
-  const [seasons, setSeasons] = useState([]);
 
 
   useEffect(() => {
@@ -36,18 +34,8 @@ export default function Home({ navigation }) {
         );
       }
     };
-    const getSeasons = async () => {
-      try {
-        const data = await fetchSeasons();
-        setSeasons(data);
-      }
-      catch(error){
-        console.error("Erro ao carregar as temporadas", error)
-      }
-    }
 
     fetchUsernameAndAvatar();
-    getSeasons();
   }, []);
 
   return (
@@ -58,15 +46,11 @@ export default function Home({ navigation }) {
         setProfileImage={setProfileImage}
         navigation={navigation}
       />
-      <FlatList
-        data={seasons}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text style={styles.text} onPress={() => navigation.navigate('Temporadas')}>Temporada: {item}</Text>
-          </View>
-        )}
-      />
+      <View style={styles.header}>
+        <Text style={styles.title}>
+          Seja Bem-vindo!
+        </Text>
+      </View>
     </SafeAreaView>
   );
 }
@@ -76,13 +60,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#54514F",
   },
-  item: {
-    padding: 10,
-    marginVertical: 8,
-    backgroundColor: "#fff",
+  header: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    textAlign: 'center'
   },
-  text: {
-    fontSize: 18,
-    color: "#333",
-  },
+  title: {
+    fontFamily: Fonts["poppins-bold"],
+    fontSize: 32,
+    color: '#fff',
+    justifyContent: 'center',
+    textAlign: 'center'
+  } 
 });
