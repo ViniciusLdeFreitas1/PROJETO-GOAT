@@ -155,9 +155,9 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         height: 50,
-        backgroundColor: '#A69F9C',
+        backgroundColor: '#A49A97',
         borderRadius: 5,
-        marginBottom: 10, 
+        marginBottom: 8, 
         paddingHorizontal: 8,
         color: 'white',
         fontSize: 14,
