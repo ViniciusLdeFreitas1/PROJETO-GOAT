@@ -10,12 +10,13 @@ const api = axios.create({
 
 export const fetchTeams = async () => {
     const params = {
-        league: "12", // ID da liga
+        id: "erf",
+        league: "12", 
     };
 
     try {
         const response = await api.get("/teams", { params });
-        return response.data.response; // Ajuste conforme a estrutura da resposta
+        return response.data.response; 
     } catch (error) {
         console.error("Falha ao buscar os times", error);
         throw error;

@@ -11,7 +11,6 @@ export default function Home({ navigation }) {
   const [username, setUsername] = useState("");
   const [profileImage, setProfileImage] = useState(DEFAULT_AVATAR);
 
-
   useEffect(() => {
     const fetchUsernameAndAvatar = async () => {
       try {
@@ -47,9 +46,7 @@ export default function Home({ navigation }) {
         navigation={navigation}
       />
       <View style={styles.header}>
-        <Text style={styles.title}>
-          Seja Bem-vindo!
-        </Text>
+        <Text style={styles.title}>Seja Bem-vindo!</Text>
       </View>
     </SafeAreaView>
   );
@@ -61,15 +58,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#54514F",
   },
   header: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center'
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
   },
   title: {
     fontFamily: Fonts["poppins-bold"],
     fontSize: 32,
-    color: '#fff',
-    justifyContent: 'center',
-    textAlign: 'center'
-  } 
+    color: "#fff",
+    justifyContent: "center",
+    textAlign: "center",
+  },
 });

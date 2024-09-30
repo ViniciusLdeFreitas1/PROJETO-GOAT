@@ -10,16 +10,16 @@ const api = axios.create({
 
 export const fetchGames = async () => {
     const params = {
-        league: "12", // Altere conforme necessário
-        date: "2024-01-01", // Data de início
-        team: "134", // Altere se necessário ou remova para todos
+        league: "12", 
+        date: "2024-01-01", 
+        team: "134", 
         timezone: "europe/london",
         season: "2024-2025",
     };
 
     try {
         const response = await api.get("/games", { params });
-        return response.data.response; // Ajuste conforme a estrutura da resposta
+        return response.data.response; 
     } catch (error) {
         console.error("Falha ao buscar os jogos", error);
         throw error;
