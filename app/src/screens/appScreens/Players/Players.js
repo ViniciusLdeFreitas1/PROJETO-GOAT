@@ -26,9 +26,8 @@ const fetchTeams = async () => {
         league: 12,
       },
     });
-    return response.data.response.filter(
-      (team) => team.id >= 132 && team.id <= 161
-    );
+    console.log(response.data.response); // Verificar os dados retornados
+    return response.data.response; // Remover filtro por ID
   } catch (error) {
     console.error("Falha ao buscar os times", error);
     throw error;
@@ -44,30 +43,11 @@ export default function Times() {
 
 
   useEffect(() => {
-    // const getTeams = async () => {
-    //   try {
-    //     const teamsData = await fetchTeams();
-    //     setTeams(teamsData);
-    //   } catch (error) {
-    //     setError(error.message);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
-
-    // getTeams();
-
-
-    const getTest = async () => {
+    const getTeams = async () => {
       try {
-        const res = await fetch("https://api-basketball.p.rapidapi.com/teams", {
-          method: "GET",
-          headers: {
-            'x-rapidapi-key': '7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f',
-            'x-rapidapi-host': 'api-basketball.p.rapidapi.com'
-          }
-        });
-        setTeams(res.json())
+        const teamsData = await fetchTeams();
+        console.log('Teams Data:', teamsData); // Verificar os dados dos times
+        setTeams(teamsData);
       } catch (error) {
         console.error(error)
       } finally {
@@ -78,16 +58,8 @@ export default function Times() {
     getTest();
   }, []);
 
-  // const filteredTeams = teams.filter((team) => {
-  //   const lowercasedFilter = searchTerm.toLowerCase();
-  //   return team.name.toLowerCase().includes(lowercasedFilter);
-  // });
-
-  // console.log("Filtered Teams: ", filteredTeams); 
-  // filteredTeams.map((val) => {
-  //   console.log(val)
-  // })
-  // console.log("Search Term: ", searchTerm); 
+  const filteredTeams = teams.filter(team => team.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  console.log('Filtered Teams:', filteredTeams); // Verificar os times filtrados
 
   if (loading) {
     return (
@@ -102,6 +74,14 @@ export default function Times() {
     return (
       <View style={styles.container}>
         <Text style={styles.errorText}>Erro: {error}</Text>
+      </View>
+    );
+  }
+
+  if (filteredTeams.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Nenhum time encontrado.</Text>
       </View>
     );
   }
