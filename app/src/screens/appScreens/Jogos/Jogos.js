@@ -19,7 +19,7 @@ const fetchGames = async () => {
         timezone: "Europe/London",
       },
     });
-    
+
     const response2024 = await api.get("/games", {
       params: {
         league: 12,
@@ -27,8 +27,8 @@ const fetchGames = async () => {
         timezone: "Europe/London",
       },
     });
-    
-    return [...response2023.data.response, ...response2024.data.response]; 
+
+    return [...response2023.data.response, ...response2024.data.response];
   } catch (error) {
     console.error("Falha ao buscar os jogos", error);
     throw error;
@@ -117,8 +117,13 @@ export default function Times() {
                     <Image source={{ uri: game.teams.away.logo }} style={styles.logo} resizeMode="contain" />
                   </View>
                 </View>
-                <Text>Status: {game.status.long === "Not Started" ? "Não começado" : game.status.long === "Game Finished" ? "Game Finalizado" : game.status.long}</Text>
-                <Text>Data: {new Date(game.date).toLocaleString()}</Text>
+                <Text style={{ color: 'white' }}>
+                  Status: {game.status.long === "Not Started" ? "Não começado" : game.status.long === "Game Finished" ? "Game Finalizado" : game.status.long}
+                </Text>
+                <Text style={{ color: 'white' }}>
+                  Data: {new Date(game.date).toLocaleString()}
+                </Text>
+
               </View>
             ))}
           </View>
@@ -150,10 +155,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginVertical: 10,
-    color: '#F55900',
+    color: '#fff',
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: "#7D7875",
     borderRadius: 8,
     padding: 15,
     marginBottom: 10,
@@ -175,6 +180,7 @@ const styles = StyleSheet.create({
   teamInfo: {
     flexDirection: 'column',
     alignItems: 'center',
+
   },
   logo: {
     width: 80,
@@ -186,6 +192,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     width: 70,
     textAlign: 'center',
+    color: '#fff',
   },
   errorText: {
     color: "red",

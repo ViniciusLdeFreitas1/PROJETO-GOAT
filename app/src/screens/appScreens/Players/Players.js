@@ -17,7 +17,8 @@ const fetchTeams = async () => {
         league: 12,
       },
     });
-    return response.data.response.filter(team => team.id >= 132 && team.id <= 161);
+    console.log(response.data.response); // Verificar os dados retornados
+    return response.data.response; // Remover filtro por ID
   } catch (error) {
     console.error("Falha ao buscar os times", error);
     throw error;
@@ -34,6 +35,7 @@ export default function Times() {
     const getTeams = async () => {
       try {
         const teamsData = await fetchTeams();
+        console.log('Teams Data:', teamsData); // Verificar os dados dos times
         setTeams(teamsData);
       } catch (error) {
         setError(error.message);
@@ -46,6 +48,7 @@ export default function Times() {
   }, []);
 
   const filteredTeams = teams.filter(team => team.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  console.log('Filtered Teams:', filteredTeams); // Verificar os times filtrados
 
   if (loading) {
     return (
@@ -60,6 +63,14 @@ export default function Times() {
     return (
       <View style={styles.container}>
         <Text style={styles.errorText}>Erro: {error}</Text>
+      </View>
+    );
+  }
+
+  if (filteredTeams.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Nenhum time encontrado.</Text>
       </View>
     );
   }
