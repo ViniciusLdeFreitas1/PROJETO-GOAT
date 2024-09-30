@@ -110,7 +110,7 @@ export default function Perfil({ navigation }) {
 const styles = StyleSheet.create({
   container: {
       flexGrow: 1,
-      backgroundColor: '#5B5959',
+      backgroundColor: '#54514F',
       padding: 20,
   },
   header: {
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   actionButton: {
       flex: 1,
       padding: 10,
-      backgroundColor: '#333',
+      backgroundColor: '#7D7875',
       borderRadius: 5,
       alignItems: 'center',
       margin: 5,
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   },
   player: {
       padding: 10,
-      backgroundColor: '#333',
+      backgroundColor: '#7D7875',
       borderRadius: 5,
   },
   playerImage: {
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
   },
   team: {
       padding: 10,
-      backgroundColor: '#333',
+      backgroundColor: '#7D7875',
       borderRadius: 5,
       marginBottom: 10,
   },

@@ -1,6 +1,15 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, ActivityIndicator, FlatList, SafeAreaView, TextInput, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  TextInput,
+  Image,
+} from "react-native";
 
 const api = axios.create({
   baseURL: "https://api-basketball.p.rapidapi.com",
@@ -17,12 +26,15 @@ const fetchTeams = async () => {
         league: 12,
       },
     });
-    return response.data.response.filter(team => team.id >= 132 && team.id <= 161);
+    return response.data.response.filter(
+      (team) => team.id >= 132 && team.id <= 161
+    );
   } catch (error) {
     console.error("Falha ao buscar os times", error);
     throw error;
   }
 };
+
 
 export default function Times() {
   const [teams, setTeams] = useState([]);
@@ -30,22 +42,52 @@ export default function Times() {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    const getTeams = async () => {
-      try {
-        const teamsData = await fetchTeams();
-        setTeams(teamsData);
-      } catch (error) {
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    getTeams();
+  useEffect(() => {
+    // const getTeams = async () => {
+    //   try {
+    //     const teamsData = await fetchTeams();
+    //     setTeams(teamsData);
+    //   } catch (error) {
+    //     setError(error.message);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
+
+    // getTeams();
+
+
+    const getTest = async () => {
+      try {
+        const res = await fetch("https://api-basketball.p.rapidapi.com/teams", {
+          method: "GET",
+          headers: {
+            'x-rapidapi-key': '7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f',
+            'x-rapidapi-host': 'api-basketball.p.rapidapi.com'
+          }
+        });
+        setTeams(res.json())
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    getTest();
   }, []);
 
-  const filteredTeams = teams.filter(team => team.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  // const filteredTeams = teams.filter((team) => {
+  //   const lowercasedFilter = searchTerm.toLowerCase();
+  //   return team.name.toLowerCase().includes(lowercasedFilter);
+  // });
+
+  // console.log("Filtered Teams: ", filteredTeams); 
+  // filteredTeams.map((val) => {
+  //   console.log(val)
+  // })
+  // console.log("Search Term: ", searchTerm); 
 
   if (loading) {
     return (
@@ -71,18 +113,30 @@ export default function Times() {
           style={styles.searchInput}
           placeholder="Buscar times..."
           value={searchTerm}
-          onChangeText={setSearchTerm}
+          onChangeText={(text) => {
+            setSearchTerm(text);
+            console.log("Texto digitado:", text); 
+          }}
           placeholderTextColor="#fff"
         />
       </View>
       <View style={styles.orangeBar} />
       <FlatList
-        data={filteredTeams}
+        data={teams}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Text style={styles.teamName} accessibilityLabel={`Time: ${item.name}`}>{item.name}</Text>
-            <Image source={{ uri: item.logo }} style={styles.logo} resizeMode="contain" />
+            <Text
+              style={styles.teamName}
+              accessibilityLabel={`Time: ${item.name}`}
+            >
+              {item.name}
+            </Text>
+            <Image
+              source={{ uri: item.logo }}
+              style={styles.logo}
+              resizeMode="contain"
+            />
           </View>
         )}
         contentContainerStyle={styles.flatListContent}
@@ -100,11 +154,11 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     padding: 10,
     marginHorizontal: 10,
-    color: 'white',
-    backgroundColor: '#A69F9C',
+    color: "white",
+    backgroundColor: "#A69F9C",
     borderRadius: 5,
     height: 50,
   },
@@ -113,7 +167,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 15,
     marginBottom: 10,
-    width: '100%',
+    width: "100%",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -125,7 +179,7 @@ const styles = StyleSheet.create({
   },
   teamName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   logo: {
     width: 80,
@@ -140,14 +194,14 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   navbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#7D7875',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#7D7875",
     padding: 10,
   },
   orangeBar: {
     height: 4,
-    backgroundColor: '#F55900',
+    backgroundColor: "#F55900",
     marginBottom: 10,
   },
 });
