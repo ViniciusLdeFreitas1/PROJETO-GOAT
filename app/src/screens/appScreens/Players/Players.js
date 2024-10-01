@@ -34,13 +34,11 @@ const fetchTeams = async () => {
   }
 };
 
-
 export default function Times() {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-
 
   useEffect(() => {
     const getTeams = async () => {
@@ -49,16 +47,30 @@ export default function Times() {
         console.log('Teams Data:', teamsData); // Verificar os dados dos times
         setTeams(teamsData);
       } catch (error) {
-        console.error(error)
+        console.error(error);
+        setError(error.message); // Exibir mensagem de erro
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
-    }
-
-    getTest();
+    };
+    getTeams();
   }, []);
 
-  const filteredTeams = teams.filter(team => team.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  // Aplicar filtro baseado no termo de busca
+  const filteredTeams = teams.filter(team =>
+    team.team_name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+  
+  console.log('Filtered Teams:', filteredTeams); // Verificar os times filtrados
+  
+  if (filteredTeams.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.errorText}>Nenhum time encontrado para "{searchTerm}".</Text>
+      </View>
+    );
+  }
+  
   console.log('Filtered Teams:', filteredTeams); // Verificar os times filtrados
 
   if (loading) {
@@ -102,7 +114,7 @@ export default function Times() {
       </View>
       <View style={styles.orangeBar} />
       <FlatList
-        data={teams}
+        data={filteredTeams} // Alterado de teams para filteredTeams
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.card}>

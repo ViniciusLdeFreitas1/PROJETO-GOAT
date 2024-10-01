@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, ActivityIndicator, FlatList, SafeAreaView, Image, TextInput } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, FlatList, SafeAreaView, TextInput, Image } from "react-native";
 
 const api = axios.create({
   baseURL: "https://api-basketball.p.rapidapi.com",
@@ -10,42 +10,31 @@ const api = axios.create({
   },
 });
 
-const fetchGames = async () => {
+const fetchTeams = async () => {
   try {
-    const response2023 = await api.get("/games", {
+    const response = await api.get("/teams", {
       params: {
         league: 12,
-        season: "2023-2024",
-        timezone: "Europe/London",
       },
     });
-
-    const response2024 = await api.get("/games", {
-      params: {
-        league: 12,
-        season: "2024-2025",
-        timezone: "Europe/London",
-      },
-    });
-
-    return [...response2023.data.response, ...response2024.data.response];
+    return response.data.response.filter(team => team.id >= 132 && team.id <= 161);
   } catch (error) {
-    console.error("Falha ao buscar os jogos", error);
+    console.error("Falha ao buscar os times", error);
     throw error;
   }
 };
 
 export default function Times() {
-  const [games, setGames] = useState([]);
+  const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    const getGames = async () => {
+    const getTeams = async () => {
       try {
-        const gamesData = await fetchGames();
-        setGames(gamesData);
+        const teamsData = await fetchTeams();
+        setTeams(teamsData);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -53,23 +42,18 @@ export default function Times() {
       }
     };
 
-    getGames();
+    getTeams();
   }, []);
 
-  const filteredGames = games.filter(game => {
-    const homeName = game.teams.home.name.toLowerCase();
-    const awayName = game.teams.away.name.toLowerCase();
-    return homeName.includes(searchTerm.toLowerCase()) || awayName.includes(searchTerm.toLowerCase());
+  // Filtro baseado no termo de pesquisa
+  const filteredTeams = teams.filter((team) => {
+    const lowercasedFilter = searchTerm.toLowerCase();
+    return team.name.toLowerCase().includes(lowercasedFilter);
   });
 
-  const groupedGames = filteredGames.reduce((acc, game) => {
-    const date = new Date(game.date).toLocaleDateString();
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(game);
-    return acc;
-  }, {});
+  // Debugging para verificar os times filtrados e o termo de busca
+  console.log("Filtered Teams: ", filteredTeams); // Verifica os times filtrados
+  console.log("Search Term: ", searchTerm); // Verifica o termo de busca
 
   if (loading) {
     return (
@@ -95,37 +79,23 @@ export default function Times() {
           style={styles.searchInput}
           placeholder="Buscar times..."
           value={searchTerm}
-          onChangeText={setSearchTerm}
-          placeholderTextColor="#fff" // Cor do texto do placeholder
+          onChangeText={(text) => {
+            setSearchTerm(text);
+            console.log("Texto digitado:", text); // Verifica se o texto está sendo atualizado
+          }}
+          placeholderTextColor="#fff"
         />
       </View>
       <View style={styles.orangeBar} />
       <FlatList
-        data={Object.keys(groupedGames)}
-        keyExtractor={(item) => item}
+        data={filteredTeams}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View>
-            <Text style={styles.dateHeader}>{item}</Text>
-            {groupedGames[item].map(game => (
-              <View key={game.id} style={styles.card}>
-                <View style={styles.teamContainer}>
-                  <View style={styles.teamInfo}>
-                    <Image source={{ uri: game.teams.home.logo }} style={styles.logo} resizeMode="contain" />
-                  </View>
-                  <Text style={styles.score}>{game.scores.home.total} - {game.scores.away.total}</Text>
-                  <View style={styles.teamInfo}>
-                    <Image source={{ uri: game.teams.away.logo }} style={styles.logo} resizeMode="contain" />
-                  </View>
-                </View>
-                <Text style={{ color: 'white' }}>
-                  Status: {game.status.long === "Not Started" ? "Não começado" : game.status.long === "Game Finished" ? "Game Finalizado" : game.status.long}
-                </Text>
-                <Text style={{ color: 'white' }}>
-                  Data: {new Date(game.date).toLocaleString()}
-                </Text>
-
-              </View>
-            ))}
+          <View style={styles.card}>
+            <Text style={styles.teamName} accessibilityLabel={`Time: ${item.name}`}>
+              {item.name}
+            </Text>
+            <Image source={{ uri: item.logo }} style={styles.logo} resizeMode="contain" />
           </View>
         )}
         contentContainerStyle={styles.flatListContent}
@@ -151,19 +121,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     height: 50,
   },
-  dateHeader: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginVertical: 10,
-    color: '#fff',
-  },
   card: {
-    backgroundColor: "#7D7875",
+    backgroundColor: "#fff",
     borderRadius: 8,
     padding: 15,
     marginBottom: 10,
     width: '100%',
-    shadowColor: "#7D7875",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -172,27 +136,14 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
-  teamContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  teamInfo: {
-    flexDirection: 'column',
-    alignItems: 'center',
-
+  teamName: {
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   logo: {
     width: 80,
     height: 80,
-    marginBottom: 5,
-  },
-  score: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    width: 70,
-    textAlign: 'center',
-    color: '#fff',
+    marginTop: 5,
   },
   errorText: {
     color: "red",
@@ -206,10 +157,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#7D7875',
     padding: 10,
-    position: 'relative',
   },
   orangeBar: {
     height: 4,
     backgroundColor: '#F55900',
+    marginBottom: 10,
   },
 });
