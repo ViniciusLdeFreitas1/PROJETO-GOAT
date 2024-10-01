@@ -1,6 +1,15 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, ActivityIndicator, FlatList, SafeAreaView, TextInput, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  TextInput,
+  Image,
+} from "react-native";
 
 const api = axios.create({
   baseURL: "https://api-basketball.p.rapidapi.com",
@@ -15,9 +24,11 @@ const fetchTeams = async () => {
     const response = await api.get("/teams", {
       params: {
         league: 12,
+        country: 12,
       },
     });
-    return response.data.response.filter(team => team.id >= 132 && team.id <= 161);
+    console.log(response.data.response);
+    return response.data.response;
   } catch (error) {
     console.error("Falha ao buscar os times", error);
     throw error;
@@ -34,26 +45,28 @@ export default function Times() {
     const getTeams = async () => {
       try {
         const teamsData = await fetchTeams();
-        setTeams(teamsData);
+        
+        // Filtra os times com IDs entre 132 e 161
+        const filteredTeamsById = teamsData.filter(
+          (team) => team.id >= 132 && team.id <= 161
+        );
+        
+        console.log("Teams Data:", filteredTeamsById);
+        setTeams(filteredTeamsById);
       } catch (error) {
+        console.error(error);
         setError(error.message);
       } finally {
         setLoading(false);
       }
     };
-
     getTeams();
   }, []);
 
-  // Filtro baseado no termo de pesquisa
-  const filteredTeams = teams.filter((team) => {
-    const lowercasedFilter = searchTerm.toLowerCase();
-    return team.name.toLowerCase().includes(lowercasedFilter);
-  });
-
-  // Debugging para verificar os times filtrados e o termo de busca
-  console.log("Filtered Teams: ", filteredTeams); // Verifica os times filtrados
-  console.log("Search Term: ", searchTerm); // Verifica o termo de busca
+  // Filtra os times com base no termo de busca
+  const filteredTeams = teams.filter((team) =>
+    searchTerm.trim() === "" || team.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   if (loading) {
     return (
@@ -79,27 +92,39 @@ export default function Times() {
           style={styles.searchInput}
           placeholder="Buscar times..."
           value={searchTerm}
-          onChangeText={(text) => {
-            setSearchTerm(text);
-            console.log("Texto digitado:", text); // Verifica se o texto está sendo atualizado
-          }}
+          onChangeText={(text) => setSearchTerm(text)}
           placeholderTextColor="#fff"
         />
       </View>
       <View style={styles.orangeBar} />
-      <FlatList
-        data={filteredTeams}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text style={styles.teamName} accessibilityLabel={`Time: ${item.name}`}>
-              {item.name}
-            </Text>
-            <Image source={{ uri: item.logo }} style={styles.logo} resizeMode="contain" />
-          </View>
-        )}
-        contentContainerStyle={styles.flatListContent}
-      />
+      {filteredTeams.length === 0 ? (
+        <View style={styles.container}>
+          <Text style={styles.errorText}>
+            Nenhum time encontrado para "{searchTerm}".
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredTeams}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <Text
+                style={styles.teamName}
+                accessibilityLabel={`Time: ${item.name}`}
+              >
+                {item.name}
+              </Text>
+              <Image
+                source={{ uri: item.logo }}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+            </View>
+          )}
+          contentContainerStyle={styles.flatListContent}
+        />
+      )}
     </SafeAreaView>
   );
 }
@@ -113,11 +138,11 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     padding: 10,
     marginHorizontal: 10,
-    color: 'white',
-    backgroundColor: '#A69F9C',
+    color: "white",
+    backgroundColor: "#A69F9C",
     borderRadius: 5,
     height: 50,
   },
@@ -126,7 +151,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 15,
     marginBottom: 10,
-    width: '100%',
+    width: "100%",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -138,7 +163,7 @@ const styles = StyleSheet.create({
   },
   teamName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   logo: {
     width: 80,
@@ -153,14 +178,14 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   navbar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#7D7875',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#7D7875",
     padding: 10,
   },
   orangeBar: {
     height: 4,
-    backgroundColor: '#F55900',
+    backgroundColor: "#F55900",
     marginBottom: 10,
   },
 });

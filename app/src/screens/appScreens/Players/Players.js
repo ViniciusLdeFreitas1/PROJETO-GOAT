@@ -24,10 +24,11 @@ const fetchTeams = async () => {
     const response = await api.get("/teams", {
       params: {
         league: 12,
+        country: 12,
       },
     });
-    console.log(response.data.response); // Verificar os dados retornados
-    return response.data.response; // Remover filtro por ID
+    console.log(response.data.response);
+    return response.data.response;
   } catch (error) {
     console.error("Falha ao buscar os times", error);
     throw error;
@@ -44,11 +45,11 @@ export default function Times() {
     const getTeams = async () => {
       try {
         const teamsData = await fetchTeams();
-        console.log('Teams Data:', teamsData); // Verificar os dados dos times
+        console.log('Teams Data:', teamsData);
         setTeams(teamsData);
       } catch (error) {
         console.error(error);
-        setError(error.message); // Exibir mensagem de erro
+        setError(error.message);
       } finally {
         setLoading(false);
       }
@@ -56,22 +57,9 @@ export default function Times() {
     getTeams();
   }, []);
 
-  // Aplicar filtro baseado no termo de busca
-  const filteredTeams = teams.filter(team =>
-    team.team_name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredTeams = teams.filter((team) =>
+    team.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
-  console.log('Filtered Teams:', filteredTeams); // Verificar os times filtrados
-  
-  if (filteredTeams.length === 0) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Nenhum time encontrado para "{searchTerm}".</Text>
-      </View>
-    );
-  }
-  
-  console.log('Filtered Teams:', filteredTeams); // Verificar os times filtrados
 
   if (loading) {
     return (
@@ -90,14 +78,6 @@ export default function Times() {
     );
   }
 
-  if (filteredTeams.length === 0) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Nenhum time encontrado.</Text>
-      </View>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.navbar}>
@@ -105,34 +85,39 @@ export default function Times() {
           style={styles.searchInput}
           placeholder="Buscar times..."
           value={searchTerm}
-          onChangeText={(text) => {
-            setSearchTerm(text);
-            console.log("Texto digitado:", text); 
-          }}
+          onChangeText={(text) => setSearchTerm(text)}
           placeholderTextColor="#fff"
         />
       </View>
       <View style={styles.orangeBar} />
-      <FlatList
-        data={filteredTeams} // Alterado de teams para filteredTeams
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <Text
-              style={styles.teamName}
-              accessibilityLabel={`Time: ${item.name}`}
-            >
-              {item.name}
-            </Text>
-            <Image
-              source={{ uri: item.logo }}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-          </View>
-        )}
-        contentContainerStyle={styles.flatListContent}
-      />
+      {filteredTeams.length === 0 ? (
+        <View style={styles.container}>
+          <Text style={styles.errorText}>
+            Nenhum time encontrado para "{searchTerm}".
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredTeams}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <Text
+                style={styles.teamName}
+                accessibilityLabel={`Time: ${item.name}`}
+              >
+                {item.name}
+              </Text>
+              <Image
+                source={{ uri: item.logo }}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+            </View>
+          )}
+          contentContainerStyle={styles.flatListContent}
+        />
+      )}
     </SafeAreaView>
   );
 }
