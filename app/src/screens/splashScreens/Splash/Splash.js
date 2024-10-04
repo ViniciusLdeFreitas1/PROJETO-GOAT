@@ -20,7 +20,7 @@ export default function Splash({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <Image source={require('../../../../../assets/splash.png')} style={styles.image} />
+            <Image source={require('../../../../../assets/Logo_goat.png')} style={styles.image} />
             <ActivityIndicator size="large" color="#fff" style={styles.loader} />
         </View>
     );
@@ -29,13 +29,13 @@ export default function Splash({ navigation }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: "center",
         alignItems: 'center',
         backgroundColor: "#666360",
     },
     image: {
-        width: 650,
-        height: 650,
+        width: 500,
+        height: 500,
         resizeMode: 'contain',
     },
     loader: {
