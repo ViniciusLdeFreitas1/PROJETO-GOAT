@@ -10,9 +10,7 @@ import {
   Image,
   TextInput,
   Picker,
-  Button,
   TouchableOpacity,
-
 } from "react-native";
 import Fonts from "../../../utils/Fonts";
 
@@ -24,31 +22,23 @@ const api = axios.create({
   },
 });
 
-const fetchGames = async () => {
+const fetchGames = async (season) => {
   try {
-    const response2023 = await api.get("/games", {
+    const response = await api.get("/games", {
       params: {
         league: 12,
-        season: "2023-2024",
+        season,
         timezone: "Europe/London",
       },
     });
-
-    const response2024 = await api.get("/games", {
-      params: {
-        league: 12,
-        season: "2024-2025",
-        timezone: "Europe/London",
-      },
-    });
-
-    return [...response2023.data.response, ...response2024.data.response];
+    return response.data.response;
   } catch (error) {
     console.error("Falha ao buscar os jogos", error);
     throw error;
   }
 };
-export default function Times() {
+
+const Times = () => {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -60,14 +50,8 @@ export default function Times() {
     const getGames = async () => {
       try {
         setLoading(true);
-        const response = await api.get("/games", {
-          params: {
-            league: 12,
-            season: season,
-            timezone: "Europe/London",
-          },
-        });
-        setGames(response.data.response);
+        const gamesData = await fetchGames(season);
+        setGames(gamesData);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -134,14 +118,13 @@ export default function Times() {
       <Picker
         selectedValue={season}
         style={styles.picker}
-        onValueChange={(itemValue) => setSeason(itemValue)}
+        onValueChange={setSeason}
       >
         <Picker.Item label="2024-2025" value="2024-2025" />
         <Picker.Item label="2023-2024" value="2023-2024" />
         <Picker.Item label="2022-2023" value="2022-2023" />
       </Picker>
       <TouchableOpacity
-        title={sortOrder === "asc" ? "Mais Antigos" : "Mais Recentes"}
         onPress={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
         style={styles.order}
       >
@@ -174,15 +157,16 @@ export default function Times() {
                     />
                   </View>
                 </View>
-                <Text>
-                  Status:{" "}
-                  {game.status.long === "Not Started"
+                <Text style={styles.statusText}>
+                  Status: {game.status.long === "Not Started"
                     ? "Não começado"
                     : game.status.long === "Game Finished"
-                    ? "Game Finalizado"
+                    ? "Jogo Finalizado"
                     : game.status.long}
                 </Text>
-                <Text>Data: {new Date(game.date).toLocaleString()}</Text>
+                <Text style={styles.dateText}>
+                  Data: {new Date(game.date).toLocaleString()}
+                </Text>
               </View>
             ))}
           </View>
@@ -191,13 +175,13 @@ export default function Times() {
       />
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#54514F",
+    backgroundColor: "#333",
   },
   searchInput: {
     flex: 1,
@@ -210,6 +194,12 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     height: 50,
   },
+  statusText: {
+    color: "white",
+  },
+  dateText: {
+    color: "white",
+  },
   dateHeader: {
     fontSize: 18,
     fontWeight: "bold",
@@ -217,13 +207,12 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   card: {
-    backgroundColor: "#fff",
-    backgroundColor: "#7D7875",
+    backgroundColor: "#222",
     borderRadius: 8,
     padding: 15,
     marginBottom: 10,
     width: "100%",
-    shadowColor: "#7D7875",
+    shadowColor: "#222",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -265,7 +254,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#7D7875",
     padding: 10,
-    position: "relative",
   },
   orangeBar: {
     height: 4,
@@ -283,7 +271,6 @@ const styles = StyleSheet.create({
   order: {
     marginTop: 10,
     marginHorizontal: 10,
-    marginTop: 10,
     backgroundColor: "#F56D09",
     alignItems: "center",
     borderRadius: 5,
@@ -297,3 +284,5 @@ const styles = StyleSheet.create({
     fontFamily: Fonts["poppins-bold"],
   },
 });
+
+export default Times;

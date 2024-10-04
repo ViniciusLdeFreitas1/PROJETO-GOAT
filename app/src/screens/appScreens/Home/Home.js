@@ -10,13 +10,15 @@ import {
   Alert,
   TouchableOpacity,
   Image,
+  ScrollView,
+  Picker,
 } from "react-native";
 import Navbar from '../../../components/Navbar'; // Importando a Navbar
 
 const api = axios.create({
   baseURL: "https://api-basketball.p.rapidapi.com",
   headers: {
-    "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
+    "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f", // Substitua pela sua chave de API
     "x-rapidapi-host": "api-basketball.p.rapidapi.com",
     "Accept": "application/json",
   },
@@ -27,6 +29,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [filteredTeams, setFilteredTeams] = useState([]); // Estado para os times filtrados
   const [activeConference, setActiveConference] = useState("Leste");
 
   const fetchNBAStandings = async () => {
@@ -45,13 +48,15 @@ const Home = () => {
       const seenTeams = new Set();
 
       standingsData.forEach(item => {
-        if (!seenTeams.has(item.team.name)) {
+        const teamName = item.team?.name;
+        if (teamName && !seenTeams.has(teamName)) {
           uniqueTeams.push(item);
-          seenTeams.add(item.team.name);
+          seenTeams.add(teamName);
         }
       });
 
       setTeams(uniqueTeams);
+      setFilteredTeams(uniqueTeams); // Define os times filtrados inicialmente como todos os times
       setError("");
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
@@ -64,73 +69,61 @@ const Home = () => {
 
   useEffect(() => {
     fetchNBAStandings();
-  }, []);
+  }, []); // O useEffect só deve ser chamado uma vez na montagem do componente
 
   const handleRetry = () => {
     fetchNBAStandings();
   };
 
   const easternTeamsNames = [
-    "Celtics",
-    "Nets",
-    "Knicks",
-    "76ers",
-    "Raptors",
-    "Bulls",
-    "Cavaliers",
-    "Pistons",
-    "Heat",
-    "Magic",
-    "Hawks",
-    "Hornets",
-    "Pacers",
-    "Wizards",
+    "Celtics", "Nets", "Knicks", "76ers", "Raptors", "Bulls", "Cavaliers",
+    "Pistons", "Heat", "Magic", "Hawks", "Hornets", "Pacers", "Wizards",
   ];
+
   const westernTeamsNames = [
-    "Thunder",
-    "Mavericks",
-    "Nuggets",
-    "Warriors",
-    "Rockets",
-    "Clippers",
-    "Lakers",
-    "Trail Blazers",
-    "Suns",
-    "Grizzlies",
-    "Kings",
-    "Pelicans",
-    "Jazz",
-    "Timberwolves",
+    "Thunder", "Mavericks", "Nuggets", "Warriors", "Rockets", "Clippers",
+    "Lakers", "Trail Blazers", "Suns", "Grizzlies", "Kings", "Pelicans",
+    "Jazz", "Timberwolves",
   ];
 
-  const easternConferenceTeams = teams.filter(team =>
-    easternTeamsNames.some(name => team.team?.name?.includes(name))
-  );
-  const westernConferenceTeams = teams.filter(team =>
-    westernTeamsNames.some(name => team.team?.name?.includes(name))
-  );
+  const filterTeamsByConference = (conference) => {
+    return teams.filter(team => 
+      (conference === "Leste" 
+        ? easternTeamsNames.some(name => team.team?.name?.includes(name))
+        : westernTeamsNames.some(name => team.team?.name?.includes(name))
+      )
+    );
+  };
 
-  const renderTeamList = (data) => {
-    if (!data || data.length === 0) {
+  useEffect(() => {
+    setFilteredTeams(filterTeamsByConference(activeConference)); // Atualiza os times filtrados quando a conferência ativa muda
+  }, [activeConference, teams]);
+
+  const renderTeamList = () => {
+    const filteredTeamsList = filteredTeams.filter((team) =>
+      team.team?.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (!filteredTeamsList.length) {
       return <Text style={styles.emptyText}>Nenhum time encontrado.</Text>;
     }
+
     return (
       <FlatList
-        data={data.filter((team) =>
-          team.team?.name.toLowerCase().includes(searchTerm.toLowerCase())
-        )}
+        data={filteredTeamsList}
         keyExtractor={(item) => item.team.id.toString()}
         renderItem={({ item, index }) => (
           <View style={styles.teamRow}>
             <Text style={styles.positionText}>{index + 1}</Text>
-            <Image 
-              source={{ uri: item.team.logo || 'url_da_imagem_padrao' }} 
-              style={[styles.teamLogo, item.team.name.includes('Heat') && styles.heatLogo]} 
+            <Image
+              source={{ uri: item.team.logo || 'url_da_imagem_padrao' }}
+              style={[styles.teamLogo, item.team.name.includes("Clippers") ? styles.clippersLogo : null]} // Adiciona uma classe específica para os Clippers
+              resizeMode="contain"
             />
             <Text style={styles.teamName}>{item.team.name}</Text>
             <View style={styles.recordContainer}>
               <Text style={styles.winsText}>V: {item.games.win.total}</Text>
-              <View style={styles.lineRecord} />
+              <Text style={styles.recordSeparator}> </Text>
               <Text style={styles.lossesText}>D: {item.games.lose.total}</Text>
             </View>
           </View>
@@ -148,7 +141,7 @@ const Home = () => {
       </View>
     );
   }
-
+  
   if (error) {
     return (
       <View style={styles.container}>
@@ -159,203 +152,138 @@ const Home = () => {
       </View>
     );
   }
-
+  
   return (
     <SafeAreaView style={styles.container}>
       <Navbar 
         searchTerm={searchTerm} 
         setSearchTerm={setSearchTerm} 
-        onConfigPress={() => Alert.alert("Configurações", "Configurações em desenvolvimento.")} // Adicione a lógica de configuração aqui
+        teams={teams} 
+        setFilteredTeams={setFilteredTeams} // Adiciona setFilteredTeams
       />
-
-      <View style={styles.orangeBar} />
-
-      <View style={styles.spacer} />
-
-      <View style={styles.toggleContainer}>
-        <TouchableOpacity 
-          onPress={() => setActiveConference("Leste")} 
-          style={[styles.toggleButton, activeConference === "Leste" && styles.activeToggle]}
+      
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={activeConference}
+          onValueChange={(itemValue) => setActiveConference(itemValue)}
+          style={styles.picker}
         >
-          <Text style={styles.toggleText}>Conferência Leste</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          onPress={() => setActiveConference("Oeste")} 
-          style={[styles.toggleButton, activeConference === "Oeste" && styles.activeToggle]}
-        >
-          <Text style={styles.toggleText}>Conferência Oeste</Text>
-        </TouchableOpacity>
+          <Picker.Item label="Conferência Leste" value="Leste" />
+          <Picker.Item label="Conferência Oeste" value="Oeste" />
+        </Picker>
       </View>
-
-      <FlatList
-        data={activeConference === "Leste" ? [{ title: 'Conferência Leste', data: easternConferenceTeams }] : [{ title: 'Conferência Oeste', data: westernConferenceTeams }]}
-        keyExtractor={(item) => item.title}
-        renderItem={({ item }) => (
-          <View style={styles.conferenceContainer}>
-            <View style={styles.tableContainer}>
-              <Text style={styles.conferenceTitle}>{item.title}</Text>
-              <View style={styles.line} />
-              {renderTeamList(item.data || [])}
-            </View>
-          </View>
-        )}
-        contentContainerStyle={styles.flatListContent}
-      />
-      <View style={styles.extraSpace} />
+  
+      <ScrollView style={styles.conferenceContainer}>
+        <View style={styles.tableContainer}>
+          <Text style={styles.conferenceTitle}>{activeConference === "Leste" ? 'Conferência Leste' : 'Conferência Oeste'}</Text>
+          <View style={styles.orangeLine} />
+          {renderTeamList()}
+        </View>
+        
+        <View style={styles.extraSpace} />
+      </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#181818",
     padding: 20,
-    backgroundColor: "#54514F",
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  profileImage: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  searchInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    color: "white",
-    backgroundColor: "#A69F9C",
-    borderRadius: 5,
-    height: 40,
-  },
-  configButton: {
-    marginLeft: 10,
-  },
-  configButtonText: {
-    color: "white",
-    fontSize: 20,
   },
   teamRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#7D7875",
-    borderRadius: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    marginBottom: 8,
-  },
-  teamLogo: {
-    width: 80,
-    height: 80,
-    marginRight: 10,
-    resizeMode: "contain",
-  },
-  heatLogo: {
-    width: 100,
-    height: 100,
-  },
-  teamName: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "bold",
-    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#fff',
   },
   positionText: {
-    color: "#F55900",
-    fontSize: 20,
+    color: '#fff',
+    width: 30,
+  },
+  teamLogo: {
+    width: 60,
+    height: 60,
     marginRight: 10,
   },
-  recordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+  clippersLogo: {
+    width: 80, // Aumenta a largura da logo do Clippers
+    height: 80, // Aumenta a altura da logo do Clippers
+    shadowColor: '#000', // Adiciona sombra
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 1.5,
   },
-  lineRecord: {
-    height: 25,
-    width: 2,
-    backgroundColor: "#fff",
-    marginHorizontal: 10,
+  teamName: {
+    flex: 1,
+    color: '#fff',
+  },
+  recordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   winsText: {
-    color: "#00FF00",
+    color: '#0f0',
   },
   lossesText: {
-    color: "#FF0000",
+    color: '#f00',
   },
-  errorText: {
-    color: "red",
-    fontSize: 16,
+  emptyText: {
+    color: '#fff',
+    textAlign: 'center',
   },
   flatListContent: {
     paddingBottom: 20,
   },
-  orangeBar: {
-    height: 4,
-    backgroundColor: "#F55900",
-  },
-  emptyText: {
-    color: "white",
-    textAlign: "center",
-    marginTop: 20,
+  errorText: {
+    color: 'red',
   },
   retryButton: {
-    backgroundColor: "#FFDDDD",
+    backgroundColor: 'blue',
     padding: 10,
     borderRadius: 5,
-    marginTop: 10,
   },
   retryButtonText: {
-    color: "red",
-    textAlign: "center",
+    color: 'white',
   },
-  toggleContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 10,
+  pickerContainer: {
+    marginVertical: 20,
   },
-  toggleButton: {
-    backgroundColor: "#7D7875",
-    padding: 8,
-    borderRadius: 5,
-    flex: 1,
-    marginHorizontal: 5,
-    alignItems: "center",
-  },
-  activeToggle: {
-    backgroundColor: "#F55900",
-  },
-  toggleText: {
-    color: "white",
-    fontWeight: "bold",
+  picker: {
+    height: 50,
+    width: '100%',
+    color: '#fff',
+    backgroundColor: '#333',
   },
   conferenceContainer: {
-    marginVertical: 8,
+    flex: 1,
   },
   tableContainer: {
-    padding: 8,
-    backgroundColor: "#7D7875",
-    borderRadius: 6,
+    backgroundColor: '#222',
+    padding: 10,
+    borderRadius: 5,
   },
   conferenceTitle: {
-    fontSize: 18,
-    color: "white",
-    fontWeight: "bold",
+    fontSize: 20,
+    color: '#fff',
     marginBottom: 5,
   },
-  line: {
+  orangeLine: {
     height: 2,
-    backgroundColor: "#fff",
-    marginVertical: 5,
-  },
-  spacer: {
-    height: 10,
+    backgroundColor: 'orange',
+    marginBottom: 5,
   },
   extraSpace: {
-    height: 20, // Ajuste a altura do espaço conforme necessário
+    height: 50,
+  },
+  recordSeparator: {
+    color: '#fff',
+    paddingHorizontal: 5,
   },
 });
 
