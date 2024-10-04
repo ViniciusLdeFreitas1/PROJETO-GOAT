@@ -1,184 +1,122 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import {
-  StyleSheet,
-  Text,
   View,
-  ActivityIndicator,
+  Text,
   FlatList,
-  SafeAreaView,
-  TextInput,
   Image,
+  ActivityIndicator,
+  StyleSheet,
+  TouchableOpacity,
 } from "react-native";
+import axios from "axios";
+import { useNavigation } from "@react-navigation/native";
 
-const api = axios.create({
-  baseURL: "https://api-basketball.p.rapidapi.com",
-  headers: {
-    "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
-    "x-rapidapi-host": "api-basketball.p.rapidapi.com",
-  },
-});
-
-const fetchTeams = async () => {
-  try {
-    const response = await api.get("/teams", {
-      params: {
-        league: 12,
-        country: 12,
-      },
-    });
-    console.log(response.data.response);
-    return response.data.response;
-  } catch (error) {
-    console.error("Falha ao buscar os times", error);
-    throw error;
-  }
-};
-
-export default function Times() {
+const NBA_Teams = () => {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+
+  const navigation = useNavigation(); 
 
   useEffect(() => {
-    const getTeams = async () => {
+    const fetchNBATeams = async () => {
+      const options = {
+        method: "GET",
+        url: "https://api-basketball.p.rapidapi.com/teams",
+        params: {
+          league: "12", 
+          season: "2023-2024", 
+        },
+        headers: {
+          "x-rapidapi-key":
+            "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
+          "x-rapidapi-host": "api-basketball.p.rapidapi.com",
+        },
+      };
+
       try {
-        const teamsData = await fetchTeams();
-        console.log('Teams Data:', teamsData);
-        setTeams(teamsData);
+        const response = await axios.request(options);
+        setTeams(response.data.response); // Salva todos os times
+        setLoading(false);
       } catch (error) {
-        console.error(error);
-        setError(error.message);
-      } finally {
+        setError("Erro ao buscar os times da NBA");
         setLoading(false);
       }
     };
-    getTeams();
+
+    fetchNBATeams();
   }, []);
 
-  const filteredTeams = teams.filter((team) =>
-    team.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
   if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Carregando...</Text>
-      </View>
-    );
+    return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
   if (error) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>Erro: {error}</Text>
-      </View>
-    );
+    return <Text style={styles.errorText}>{error}</Text>;
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.navbar}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Buscar times..."
-          value={searchTerm}
-          onChangeText={(text) => setSearchTerm(text)}
-          placeholderTextColor="#fff"
-        />
-      </View>
-      <View style={styles.orangeBar} />
-      {filteredTeams.length === 0 ? (
-        <View style={styles.container}>
-          <Text style={styles.errorText}>
-            Nenhum time encontrado para "{searchTerm}".
-          </Text>
-        </View>
-      ) : (
-        <FlatList
-          data={filteredTeams}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Text
-                style={styles.teamName}
-                accessibilityLabel={`Time: ${item.name}`}
-              >
-                {item.name}
-              </Text>
-              <Image
-                source={{ uri: item.logo }}
-                style={styles.logo}
-                resizeMode="contain"
-              />
-            </View>
-          )}
-          contentContainerStyle={styles.flatListContent}
-        />
-      )}
-    </SafeAreaView>
+    <View style={styles.container}>
+      <Text style={styles.title}>Times da NBA</Text>
+      <FlatList
+        data={teams}
+        keyExtractor={(item) => item.id.toString()} // ID único de cada time
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("TeamDetails", { teamId: item.id })
+            } // Navegação ao clicar
+            style={styles.teamContainer}
+          >
+            <Image source={{ uri: item.logo }} style={styles.logo} />
+            <Text style={styles.teamName}>{item.name}</Text>
+            <Text style={styles.teamCountry}>{item.country.name}</Text>
+          </TouchableOpacity>
+        )}
+      />
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    backgroundColor: "#54514F",
+    backgroundColor: "#333"
   },
-  searchInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    marginHorizontal: 10,
-    color: "white",
-    backgroundColor: "#A69F9C",
-    borderRadius: 5,
-    height: 50,
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+    color: "#fff"
   },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 10,
-    width: "100%",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
+  teamContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 10,
+    marginBottom: 10
   },
   teamName: {
     fontSize: 18,
+    marginLeft: 10,
     fontWeight: "bold",
+    color: "#fff"
+  },
+  teamCountry: {
+    fontSize: 16,
+    marginLeft: 10,
+    color: "#F56D09"
   },
   logo: {
-    width: 80,
-    height: 80,
-    marginTop: 5,
+    width: 50,
+    height: 50,
   },
   errorText: {
     color: "red",
-    fontSize: 16,
-  },
-  flatListContent: {
-    paddingBottom: 20,
-  },
-  navbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#7D7875",
-    padding: 10,
-  },
-  orangeBar: {
-    height: 4,
-    backgroundColor: "#F55900",
-    marginBottom: 10,
+    fontSize: 18,
   },
 });
+
+export default NBA_Teams;
