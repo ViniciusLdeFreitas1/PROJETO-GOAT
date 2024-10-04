@@ -19,7 +19,7 @@ const badWords = [
     'senha', '123456', 'password', 'admin', 'user',
 ];
 
-export default function Component() {
+export default function Component({ navigation }) {
     const [email, setEmail] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -32,8 +32,6 @@ export default function Component() {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isUsernameValid, setIsUsernameValid] = useState(false);
     const [usernameBlurred, setUsernameBlurred] = useState(false);
-
-
 
     const isValidUsername = (username) => {
         const regex = /^[a-zA-Z0-9_]+$/;
@@ -126,7 +124,7 @@ export default function Component() {
                     const user = userCredential.user;
                     const userId = user.uid;
                     await setDoc(doc(db, "Users", userId), {
-                        nome: username,
+                        nome: username, // Armazenando o nome de usuário
                         email: email,
                         senha: password,
                     });
@@ -134,7 +132,7 @@ export default function Component() {
                     setEmail('');
                     setPassword('');
                     setConfirmPassword('');
-                    // navigation.navigate('Login');
+                    navigation.navigate('Login');
                 })
                 .catch((error) => {
                     const errorMessage = error.message;
@@ -234,12 +232,11 @@ export default function Component() {
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => navigation.navigate(Login)}>
-                <Text
-                    style={styles.linkText}
-                    
-                >
-                    Logar
-                </Text>
+                    <Text
+                        style={styles.linkText}
+                    >
+                        Logar
+                    </Text>
                 </TouchableOpacity>
             </View>
         </View>

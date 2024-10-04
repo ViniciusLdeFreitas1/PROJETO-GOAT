@@ -1,7 +1,17 @@
-import axios from "axios"; 
+import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, ActivityIndicator, FlatList, SafeAreaView, TextInput, Image, TouchableOpacity, Alert } from "react-native";
-import Navbar from "../../../components/Navbar";
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  Alert,
+  TouchableOpacity,
+  Image,
+} from "react-native";
+import Navbar from '../../../components/Navbar'; // Importando a Navbar
 
 const api = axios.create({
   baseURL: "https://api-basketball.p.rapidapi.com",
@@ -13,12 +23,11 @@ const api = axios.create({
 });
 
 const Home = () => {
-  const [easternTeams, setEasternTeams] = useState([]);
-  const [westernTeams, setWesternTeams] = useState([]);
+  const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentConference, setCurrentConference] = useState(0); // 0 = Leste, 1 = Oeste
+  const [activeConference, setActiveConference] = useState("Leste");
 
   const fetchNBAStandings = async () => {
     setLoading(true);
@@ -28,22 +37,25 @@ const Home = () => {
       });
 
       const standingsData = response.data.response[0];
-
-      if (standingsData && Array.isArray(standingsData)) {
-        const eastern = standingsData.filter(team => team.conference === "East");
-        const western = standingsData.filter(team => team.conference === "West");
-        setEasternTeams(eastern);
-        setWesternTeams(western);
-      } else {
-        console.error("Dados de standings não encontrados");
-        setEasternTeams([]);
-        setWesternTeams([]);
+      if (!standingsData || standingsData.length === 0) {
+        throw new Error("Dados de standings não encontrados.");
       }
 
+      const uniqueTeams = [];
+      const seenTeams = new Set();
+
+      standingsData.forEach(item => {
+        if (!seenTeams.has(item.team.name)) {
+          uniqueTeams.push(item);
+          seenTeams.add(item.team.name);
+        }
+      });
+
+      setTeams(uniqueTeams);
       setError("");
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
-      setError(error.response ? error.response.data.message || "Erro ao carregar dados. Tente novamente." : "Erro desconhecido.");
+      setError(error.response?.data.message || "Erro desconhecido.");
       Alert.alert("Erro", error.message || "Erro desconhecido. Tente novamente.");
     } finally {
       setLoading(false);
@@ -54,23 +66,78 @@ const Home = () => {
     fetchNBAStandings();
   }, []);
 
-  // Filtra as equipes com base no termo de busca
-  const filteredTeams = (currentConference === 0 ? easternTeams : westernTeams).filter((team) => {
-    const teamName = team.team?.name;
-    return teamName && teamName.toLowerCase().includes(searchTerm.toLowerCase());
-  });
-
-  const conferenceNames = ["Conferência Leste", "Conferência Oeste"];
-
-  const handleConferenceChange = (direction) => {
-    setCurrentConference((prev) => {
-      const nextConference = prev + direction;
-      return Math.max(0, Math.min(nextConference, 1));
-    });
-  };
-
   const handleRetry = () => {
     fetchNBAStandings();
+  };
+
+  const easternTeamsNames = [
+    "Celtics",
+    "Nets",
+    "Knicks",
+    "76ers",
+    "Raptors",
+    "Bulls",
+    "Cavaliers",
+    "Pistons",
+    "Heat",
+    "Magic",
+    "Hawks",
+    "Hornets",
+    "Pacers",
+    "Wizards",
+  ];
+  const westernTeamsNames = [
+    "Thunder",
+    "Mavericks",
+    "Nuggets",
+    "Warriors",
+    "Rockets",
+    "Clippers",
+    "Lakers",
+    "Trail Blazers",
+    "Suns",
+    "Grizzlies",
+    "Kings",
+    "Pelicans",
+    "Jazz",
+    "Timberwolves",
+  ];
+
+  const easternConferenceTeams = teams.filter(team =>
+    easternTeamsNames.some(name => team.team?.name?.includes(name))
+  );
+  const westernConferenceTeams = teams.filter(team =>
+    westernTeamsNames.some(name => team.team?.name?.includes(name))
+  );
+
+  const renderTeamList = (data) => {
+    if (!data || data.length === 0) {
+      return <Text style={styles.emptyText}>Nenhum time encontrado.</Text>;
+    }
+    return (
+      <FlatList
+        data={data.filter((team) =>
+          team.team?.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )}
+        keyExtractor={(item) => item.team.id.toString()}
+        renderItem={({ item, index }) => (
+          <View style={styles.teamRow}>
+            <Text style={styles.positionText}>{index + 1}</Text>
+            <Image 
+              source={{ uri: item.team.logo || 'url_da_imagem_padrao' }} 
+              style={[styles.teamLogo, item.team.name.includes('Heat') && styles.heatLogo]} 
+            />
+            <Text style={styles.teamName}>{item.team.name}</Text>
+            <View style={styles.recordContainer}>
+              <Text style={styles.winsText}>V: {item.games.win.total}</Text>
+              <View style={styles.lineRecord} />
+              <Text style={styles.lossesText}>D: {item.games.lose.total}</Text>
+            </View>
+          </View>
+        )}
+        contentContainerStyle={styles.flatListContent}
+      />
+    );
   };
 
   if (loading) {
@@ -95,47 +162,46 @@ const Home = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Navbar>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Buscar times..."
-          value={searchTerm}
-          onChangeText={setSearchTerm}
-          placeholderTextColor="#fff"
-        />
-      </Navbar>
+      <Navbar 
+        searchTerm={searchTerm} 
+        setSearchTerm={setSearchTerm} 
+        onConfigPress={() => Alert.alert("Configurações", "Configurações em desenvolvimento.")} // Adicione a lógica de configuração aqui
+      />
+
       <View style={styles.orangeBar} />
-      <View style={styles.conferenceHeader}>
-        <TouchableOpacity onPress={() => handleConferenceChange(-1)} disabled={currentConference === 0}>
-          <Text style={styles.arrow}>&lt;</Text>
+
+      <View style={styles.spacer} />
+
+      <View style={styles.toggleContainer}>
+        <TouchableOpacity 
+          onPress={() => setActiveConference("Leste")} 
+          style={[styles.toggleButton, activeConference === "Leste" && styles.activeToggle]}
+        >
+          <Text style={styles.toggleText}>Conferência Leste</Text>
         </TouchableOpacity>
-        <Text style={styles.conferenceTitle}>{conferenceNames[currentConference]}</Text>
-        <TouchableOpacity onPress={() => handleConferenceChange(1)} disabled={currentConference === 1}>
-          <Text style={styles.arrow}>&gt;</Text>
+        <TouchableOpacity 
+          onPress={() => setActiveConference("Oeste")} 
+          style={[styles.toggleButton, activeConference === "Oeste" && styles.activeToggle]}
+        >
+          <Text style={styles.toggleText}>Conferência Oeste</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.underline} />
+
       <FlatList
-        data={filteredTeams}
-        keyExtractor={(item) => item.team.id.toString()}
+        data={activeConference === "Leste" ? [{ title: 'Conferência Leste', data: easternConferenceTeams }] : [{ title: 'Conferência Oeste', data: westernConferenceTeams }]}
+        keyExtractor={(item) => item.title}
         renderItem={({ item }) => (
-          <View style={styles.teamContainer}>
-            <Image
-              source={{ uri: item.team.logo }}
-              style={styles.teamLogo}
-            />
-            <View style={styles.teamInfo}>
-              <Text style={styles.teamName}>{item.team.name}</Text>
-              <Text>Posição: {item.position}</Text>
-              <Text>Vitórias: {item.games?.win?.total}</Text>
-              <Text>Derrotas: {item.games?.lose?.total}</Text>
-              <Text>Classificação: {item.position}</Text>
+          <View style={styles.conferenceContainer}>
+            <View style={styles.tableContainer}>
+              <Text style={styles.conferenceTitle}>{item.title}</Text>
+              <View style={styles.line} />
+              {renderTeamList(item.data || [])}
             </View>
           </View>
         )}
         contentContainerStyle={styles.flatListContent}
-        ListEmptyComponent={<Text style={styles.emptyText}>Nenhum time encontrado.</Text>}
       />
+      <View style={styles.extraSpace} />
     </SafeAreaView>
   );
 };
@@ -146,56 +212,79 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#54514F",
   },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  profileImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
   searchInput: {
     flex: 1,
     borderWidth: 1,
     borderColor: "#ccc",
     padding: 10,
-    marginHorizontal: 10,
     color: "white",
     backgroundColor: "#A69F9C",
     borderRadius: 5,
-    height: 50,
+    height: 40,
   },
-  conferenceHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginVertical: 10,
+  configButton: {
+    marginLeft: 10,
   },
-  arrow: {
-    fontSize: 24,
-    color: "#F55900",
-    paddingHorizontal: 15,
-  },
-  conferenceTitle: {
+  configButtonText: {
     color: "white",
     fontSize: 20,
   },
-  underline: {
-    height: 2,
-    backgroundColor: "#F55900",
-    marginBottom: 10,
-  },
-  teamContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: "lightgray",
-    borderRadius: 8,
-    padding: 10,
-    marginBottom: 10,
+  teamRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#7D7875",
+    borderRadius: 6,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    marginBottom: 8,
   },
   teamLogo: {
-    width: 50,  // Ajuste o tamanho do logo
-    height: 50, // Ajuste o tamanho do logo
-    marginRight: 15,
+    width: 80,
+    height: 80,
+    marginRight: 10,
+    resizeMode: "contain",
   },
-  teamInfo: {
-    flex: 1,
+  heatLogo: {
+    width: 100,
+    height: 100,
   },
   teamName: {
-    color: "black",
-    fontSize: 18,
+    color: "white",
+    fontSize: 20,
+    fontWeight: "bold",
+    flex: 1,
+  },
+  positionText: {
+    color: "#F55900",
+    fontSize: 20,
+    marginRight: 10,
+  },
+  recordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  lineRecord: {
+    height: 25,
+    width: 2,
+    backgroundColor: "#fff",
+    marginHorizontal: 10,
+  },
+  winsText: {
+    color: "#00FF00",
+  },
+  lossesText: {
+    color: "#FF0000",
   },
   errorText: {
     color: "red",
@@ -214,15 +303,59 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   retryButton: {
-    marginTop: 20,
+    backgroundColor: "#FFDDDD",
     padding: 10,
-    backgroundColor: "#F55900",
     borderRadius: 5,
-    alignItems: "center",
+    marginTop: 10,
   },
   retryButtonText: {
+    color: "red",
+    textAlign: "center",
+  },
+  toggleContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginVertical: 10,
+  },
+  toggleButton: {
+    backgroundColor: "#7D7875",
+    padding: 8,
+    borderRadius: 5,
+    flex: 1,
+    marginHorizontal: 5,
+    alignItems: "center",
+  },
+  activeToggle: {
+    backgroundColor: "#F55900",
+  },
+  toggleText: {
     color: "white",
-    fontSize: 16,
+    fontWeight: "bold",
+  },
+  conferenceContainer: {
+    marginVertical: 8,
+  },
+  tableContainer: {
+    padding: 8,
+    backgroundColor: "#7D7875",
+    borderRadius: 6,
+  },
+  conferenceTitle: {
+    fontSize: 18,
+    color: "white",
+    fontWeight: "bold",
+    marginBottom: 5,
+  },
+  line: {
+    height: 2,
+    backgroundColor: "#fff",
+    marginVertical: 5,
+  },
+  spacer: {
+    height: 10,
+  },
+  extraSpace: {
+    height: 20, // Ajuste a altura do espaço conforme necessário
   },
 });
 

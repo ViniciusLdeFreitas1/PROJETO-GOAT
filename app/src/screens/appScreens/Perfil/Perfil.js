@@ -15,7 +15,7 @@ import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FontAwesome } from '@expo/vector-icons';
 import { useUser } from '../../../components/UserContext';
-
+import goatlogo from '../../../../../assets/goatlogo.png'; // Verifique se o caminho está correto
 
 export default function Perfil({ navigation }) {
   const { userData, updateUserData } = useUser();
@@ -68,9 +68,7 @@ export default function Perfil({ navigation }) {
           {profileImage ? (
             <Image source={{ uri: profileImage }} style={styles.profileImage} />
           ) : (
-            <View style={styles.placeholder}>
-              <Text style={styles.placeholderText}>Foto</Text>
-            </View>
+            <Image source={goatlogo} style={styles.placeholder} /> // Usando goatlogo como fundo
           )}
         </TouchableOpacity>
         <Text style={styles.profileName}>{userData.username}</Text>
@@ -109,144 +107,81 @@ export default function Perfil({ navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-      flexGrow: 1,
-      backgroundColor: '#54514F',
-      padding: 20,
-  },
-  header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginBottom: 20,
-  },
-  menuButton: {
-      padding: 10,
-      backgroundColor: '#333',
-      borderRadius: 5,
-  },
-  searchContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: '#333',
-      padding: 10,
-      borderRadius: 5,
-      flex: 1,
-      margin: 20,
-  },
-  searchInput: {
-      flex: 1,
-      color: '#fff',
-      fontSize: 16,
-      padding: 10,
-  },
-  searchIcon: {
-      padding: 10,
-      backgroundColor: '#444',
-      borderRadius: 5,
-  },
-  profileButton: {
-      padding: 10,
-      backgroundColor: '#333',
-      borderRadius: 5,
+    flexGrow: 1,
+    backgroundColor: '#54514F',
+    padding: 20,
   },
   profile: {
-      alignItems: 'center',
-      marginBottom: 20,
+    alignItems: 'center',
+    marginBottom: 20,
   },
   profileImage: {
-      width: 150,
-      height: 150,
-      borderRadius: 75,
-      resizeMode: 'cover',
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    resizeMode: 'cover',
   },
   placeholder: {
-      width: 150,
-      height: 150,
-      borderRadius: 75,
-      backgroundColor: '#C1644F',
-      justifyContent: 'center',
-      alignItems: 'center',
-  },
-  placeholderText: {
-      color: 'white',
-      fontFamily: 'Poppins-Bold',
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   profileName: {
-      color: '#fff',
-      fontSize: 24,
-      fontWeight: 'bold',
-      marginTop: 10,
-  },
-  profileEmail: {
-      color: '#fff',
-      fontSize: 16,
-      marginTop: 5,
+    color: '#fff',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginTop: 10,
   },
   actions: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
   actionButton: {
-      flex: 1,
-      padding: 10,
-      backgroundColor: '#7D7875',
-      borderRadius: 5,
-      alignItems: 'center',
-      margin: 5,
-  },
-  actionButtonText: {
-      color: '#fff',
-      fontSize: 18,
-  },
-  button: {
-      backgroundColor: '#C1644F',
-      padding: 10,
-      borderRadius: 5,
-      width: '80%',
-      alignItems: 'center',
-      marginTop: 20,
-      alignSelf: 'center',
-  },
-  buttonText: {
-      color: 'white',
-      fontSize: 16,
-      fontFamily: 'Poppins-Bold',
-  },
-  player: {
-      padding: 10,
-      backgroundColor: '#7D7875',
-      borderRadius: 5,
-  },
-  playerImage: {
-      width: 100,
-      height: 100,
-      borderRadius: 50,
-      resizeMode: 'cover',
-  },
-  team: {
-      padding: 10,
-      backgroundColor: '#7D7875',
-      borderRadius: 5,
-      marginBottom: 10,
-  },
-  teamImage: {
-      width: 100,
-      height: 100,
-      resizeMode: 'cover',
+    flex: 1,
+    padding: 10,
+    backgroundColor: '#7D7875',
+    borderRadius: 5,
+    alignItems: 'center',
+    margin: 5,
   },
   sections: {
-      marginBottom: 20,
+    marginBottom: 20,
   },
   sectionTitle: {
-      color: '#fff',
-      fontSize: 20,
-      fontWeight: 'bold',
-      marginBottom: 10,
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   sectionSubtitle: {
-      color: '#fff',
-      fontSize: 18,
-      marginBottom: 10,
+    color: '#fff',
+    fontSize: 18,
+    marginBottom: 10,
+  },
+  team: {
+    padding: 10,
+    backgroundColor: '#7D7875',
+    borderRadius: 5,
+    marginBottom: 10,
+  },
+  teamImage: {
+    width: 100,
+    height: 100,
+    resizeMode: 'cover',
+  },
+  player: {
+    padding: 10,
+    backgroundColor: '#7D7875',
+    borderRadius: 5,
+  },
+  playerImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    resizeMode: 'cover',
   },
 });
+
