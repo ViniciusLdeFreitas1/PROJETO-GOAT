@@ -13,14 +13,14 @@ import {
   ScrollView,
   Picker,
 } from "react-native";
-import Navbar from "../../../components/Navbar"; // Importando a Navbar
+import Navbar from '../../../components/Navbar'; 
 
 const api = axios.create({
   baseURL: "https://api-basketball.p.rapidapi.com",
   headers: {
-    "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
+    "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f", 
     "x-rapidapi-host": "api-basketball.p.rapidapi.com",
-    Accept: "application/json",
+    "Accept": "application/json",
   },
 });
 
@@ -29,7 +29,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredTeams, setFilteredTeams] = useState(teams);
+  const [filteredTeams, setFilteredTeams] = useState(teams); 
   const [activeConference, setActiveConference] = useState("Leste");
 
   const fetchNBAStandings = async () => {
@@ -47,7 +47,7 @@ const Home = () => {
       const uniqueTeams = [];
       const seenTeams = new Set();
 
-      standingsData.forEach((item) => {
+      standingsData.forEach(item => {
         const teamName = item.team?.name;
         if (teamName && !seenTeams.has(teamName)) {
           uniqueTeams.push(item);
@@ -56,15 +56,12 @@ const Home = () => {
       });
 
       setTeams(uniqueTeams);
-      setFilteredTeams(uniqueTeams); // Define os times filtrados inicialmente como todos os times
+      setFilteredTeams(uniqueTeams); 
       setError("");
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
       setError(error.response?.data.message || "Erro desconhecido.");
-      Alert.alert(
-        "Erro",
-        error.message || "Erro desconhecido. Tente novamente."
-      );
+      Alert.alert("Erro", error.message || "Erro desconhecido. Tente novamente.");
     } finally {
       setLoading(false);
     }
@@ -72,56 +69,34 @@ const Home = () => {
 
   useEffect(() => {
     fetchNBAStandings();
-  }, []);
+  }, []); 
 
   const handleRetry = () => {
     fetchNBAStandings();
   };
 
   const easternTeamsNames = [
-    "Celtics",
-    "Nets",
-    "Knicks",
-    "76ers",
-    "Raptors",
-    "Bulls",
-    "Cavaliers",
-    "Pistons",
-    "Heat",
-    "Magic",
-    "Hawks",
-    "Hornets",
-    "Pacers",
-    "Wizards",
+    "Celtics", "Nets", "Knicks", "76ers", "Raptors", "Bulls", "Cavaliers",
+    "Pistons", "Heat", "Magic", "Hawks", "Hornets", "Pacers", "Wizards",
   ];
 
   const westernTeamsNames = [
-    "Thunder",
-    "Mavericks",
-    "Nuggets",
-    "Warriors",
-    "Rockets",
-    "Clippers",
-    "Lakers",
-    "Trail Blazers",
-    "Suns",
-    "Grizzlies",
-    "Kings",
-    "Pelicans",
-    "Jazz",
-    "Timberwolves",
+    "Thunder", "Mavericks", "Nuggets", "Warriors", "Rockets", "Clippers",
+    "Lakers", "Trail Blazers", "Suns", "Grizzlies", "Kings", "Pelicans",
+    "Jazz", "Timberwolves",
   ];
 
   const filterTeamsByConference = (conference) => {
-    return teams.filter((team) =>
-      conference === "Leste"
-        ? easternTeamsNames.some((name) => team.team?.name.includes(name))
-        : westernTeamsNames.some((name) => team.team?.name.includes(name))
+    return teams.filter(team => 
+      (conference === "Leste" 
+        ? easternTeamsNames.some(name => team.team?.name?.includes(name))
+        : westernTeamsNames.some(name => team.team?.name?.includes(name))
+      )
     );
   };
 
   useEffect(() => {
-    setFilteredTeams(filterTeamsByConference(activeConference)); // Atualiza os times filtrados quando a conferência ativa muda
+    setFilteredTeams(filterTeamsByConference(activeConference)); 
   }, [activeConference, teams]);
 
   const renderTeamList = () => {
@@ -141,13 +116,8 @@ const Home = () => {
           <View style={styles.teamRow}>
             <Text style={styles.positionText}>{index + 1}</Text>
             <Image
-              source={{ uri: item.team.logo || "url_da_imagem_padrao" }}
-              style={[
-                styles.teamLogo,
-                item.team.name.includes("Clippers")
-                  ? styles.clippersLogo
-                  : null,
-              ]}
+              source={{ uri: item.team.logo || 'url_da_imagem_padrao' }}
+              style={[styles.teamLogo, item.team.name.includes("Clippers") ? styles.clippersLogo : null]} 
               resizeMode="contain"
             />
             <Text style={styles.teamName}>{item.team.name}</Text>
@@ -163,15 +133,6 @@ const Home = () => {
     );
   };
 
-  const handleSearchChange = (term) => {
-    setSearchTerm(term);
-    const teamsForActiveConference = filterTeamsByConference(activeConference);
-    const filtered = teamsForActiveConference.filter((team) =>
-      team.team?.name.toLowerCase().includes(term.toLowerCase())
-    );
-    setFilteredTeams(filtered);
-  };
-
   if (loading) {
     return (
       <View style={styles.container}>
@@ -180,7 +141,7 @@ const Home = () => {
       </View>
     );
   }
-
+  
   if (error) {
     return (
       <View style={styles.container}>
@@ -191,15 +152,16 @@ const Home = () => {
       </View>
     );
   }
-
+  
   return (
     <SafeAreaView style={styles.container}>
-      <Navbar
-        searchTerm={searchTerm}
-        setSearchTerm={handleSearchChange} // Usa a nova função de busca
-        teams={teams}
+      <Navbar 
+        searchTerm={searchTerm} 
+        setSearchTerm={setSearchTerm} 
+        teams={teams} 
+        setFilteredTeams={setFilteredTeams} 
       />
-
+      
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={activeConference}
@@ -210,23 +172,19 @@ const Home = () => {
           <Picker.Item label="Conferência Oeste" value="Oeste" />
         </Picker>
       </View>
-
+  
       <ScrollView style={styles.conferenceContainer}>
         <View style={styles.tableContainer}>
-          <Text style={styles.conferenceTitle}>
-            {activeConference === "Leste"
-              ? "Conferência Leste"
-              : "Conferência Oeste"}
-          </Text>
+          <Text style={styles.conferenceTitle}>{activeConference === "Leste" ? 'Conferência Leste' : 'Conferência Oeste'}</Text>
           <View style={styles.orangeLine} />
           {renderTeamList()}
         </View>
-
+        
         <View style={styles.extraSpace} />
       </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -235,14 +193,14 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   teamRow: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#fff",
+    borderBottomColor: '#fff',
   },
   positionText: {
-    color: "#fff",
+    color: '#fff',
     width: 30,
   },
   teamLogo: {
@@ -251,9 +209,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   clippersLogo: {
-    width: 80,
-    height: 80,
-    shadowColor: "#000",
+    width: 80, 
+    height: 80, 
+    shadowColor: '#000', 
     shadowOffset: {
       width: 0,
       height: 1,
@@ -263,68 +221,68 @@ const styles = StyleSheet.create({
   },
   teamName: {
     flex: 1,
-    color: "#fff",
+    color: '#fff',
   },
   recordContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   winsText: {
-    color: "#0f0",
+    color: '#0f0',
   },
   lossesText: {
-    color: "#f00",
+    color: '#f00',
   },
   emptyText: {
-    color: "#fff",
-    textAlign: "center",
+    color: '#fff',
+    textAlign: 'center',
   },
   flatListContent: {
     paddingBottom: 20,
   },
   errorText: {
-    color: "red",
+    color: 'red',
   },
   retryButton: {
-    backgroundColor: "blue",
+    backgroundColor: 'blue',
     padding: 10,
     borderRadius: 5,
   },
   retryButtonText: {
-    color: "white",
+    color: 'white',
   },
   pickerContainer: {
     marginVertical: 20,
   },
   picker: {
     height: 50,
-    width: "100%",
-    color: "#fff",
-    backgroundColor: "#333",
+    width: '100%',
+    color: '#fff',
+    backgroundColor: '#333',
   },
   conferenceContainer: {
     flex: 1,
   },
   tableContainer: {
-    backgroundColor: "#222",
+    backgroundColor: '#222',
     padding: 10,
     borderRadius: 5,
   },
   conferenceTitle: {
     fontSize: 20,
-    color: "#fff",
+    color: '#fff',
     marginBottom: 5,
   },
   orangeLine: {
     height: 2,
-    backgroundColor: "orange",
+    backgroundColor: 'orange',
     marginBottom: 5,
   },
   extraSpace: {
     height: 50,
   },
   recordSeparator: {
-    color: "#fff",
+    color: '#fff',
     paddingHorizontal: 5,
   },
 });
