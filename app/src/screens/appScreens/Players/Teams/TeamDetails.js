@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Image, ActivityIndicator, StyleSheet } from "react-native";
+import { View, Text, Image, ActivityIndicator, TouchableOpacity, StyleSheet } from "react-native";
 import axios from "axios";
+import { useNavigation } from '@react-navigation/native';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const TeamDetails = ({ route }) => {
-  const { teamId } = route.params; // Recebe o ID do time da navegação
+  const navigation = useNavigation();
+  const { teamId, conference, position, fromHome } = route.params;
   const [teamInfo, setTeamInfo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,10 +16,9 @@ const TeamDetails = ({ route }) => {
       const options = {
         method: "GET",
         url: "https://api-basketball.p.rapidapi.com/teams",
-        params: { id: teamId }, // ID do time recebido via navegação
+        params: { id: teamId },
         headers: {
-          "x-rapidapi-key":
-            "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
+          "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
           "x-rapidapi-host": "api-basketball.p.rapidapi.com",
         },
       };
@@ -44,13 +46,35 @@ const TeamDetails = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      {teamInfo && (
-        <View>
-          <Text style={styles.title}>{teamInfo.name}</Text>
-          <Text style={styles.info}>País: {teamInfo.country.name}</Text>
-          <Text style={styles.info}>Fundado em: {teamInfo.founded}</Text>
-          <Image source={{ uri: teamInfo.logo }} style={styles.logo} />
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <MaterialIcons name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
+      {teamInfo ? (
+        <View style={styles.infoContainer}>
+          <View style={styles.card}>
+            <Image source={{ uri: teamInfo.logo }} style={styles.logo} />
+            <Text style={styles.title}>{teamInfo.name}</Text>
+            <Image
+              source={{ uri: teamInfo.country?.flag || 'https://example.com/default-flag.png' }}
+              style={styles.flag}
+            />
+            <Text style={styles.info}>
+              País: {teamInfo.country?.name || "N/A"}
+            </Text>
+            {fromHome && (
+              <>
+                <Text style={styles.info}>
+                  Conferência: {conference || "N/A"}
+                </Text>
+                <Text style={styles.info}>
+                  Posição: {position || "N/A"}
+                </Text>
+              </>
+            )}
+          </View>
         </View>
+      ) : (
+        <Text style={styles.errorText}>Time não encontrado.</Text>
       )}
     </View>
   );
@@ -59,26 +83,56 @@ const TeamDetails = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     padding: 20,
     backgroundColor: "#333",
   },
+  backButton: {
+    alignSelf: 'flex-start',
+    marginVertical: 10,
+  },
+  infoContainer: {
+    alignItems: "center",
+    width: '100%',
+  },
+  card: {
+    borderRadius: 10,
+    backgroundColor: '#444',
+    padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    width: '100%',
+    maxWidth: 400,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
+  },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginVertical: 10,
     color: "#fff",
+  },
+  flag: {
+    width: 50,
+    height: 30,
+    marginVertical: 10,
   },
   info: {
     fontSize: 18,
-    marginBottom: 5,
-    color: "#fff"
+    color: "#fff",
   },
   logo: {
-    width: 100,
-    height: 100,
-    marginTop: 20,
+    width: 120, // Ajuste a largura se necessário
+    height: 120, // Ajuste a altura se necessário
+    marginBottom: 10,
+    resizeMode: 'contain', // Garante que a logo seja exibida inteira
   },
   errorText: {
     color: "red",

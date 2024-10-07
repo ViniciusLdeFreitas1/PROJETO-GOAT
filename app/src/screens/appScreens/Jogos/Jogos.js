@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Fonts from "../../../utils/Fonts";
+import Navbar from '../../../components/Navbar';
 
 const api = axios.create({
   baseURL: "https://api-basketball.p.rapidapi.com",
@@ -105,15 +106,7 @@ const Times = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.navbar}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Buscar times..."
-          value={searchTerm}
-          onChangeText={setSearchTerm}
-          placeholderTextColor="#fff"
-        />
-      </View>
+      <Navbar setSearchTerm={setSearchTerm} />
       <View style={styles.orangeBar} />
       <Picker
         selectedValue={season}
@@ -183,78 +176,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: "#333",
   },
-  searchInput: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    padding: 10,
-    marginHorizontal: 10,
-    color: "white",
-    backgroundColor: "#A69F9C",
-    borderRadius: 5,
-    height: 50,
-  },
-  statusText: {
-    color: "white",
-  },
-  dateText: {
-    color: "white",
-  },
-  dateHeader: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginVertical: 10,
-    color: "#fff",
-  },
-  card: {
-    backgroundColor: "#222",
-    borderRadius: 8,
-    padding: 15,
-    marginBottom: 10,
-    width: "100%",
-    shadowColor: "#222",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  teamContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-around",
-  },
-  teamInfo: {
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  logo: {
-    width: 80,
-    height: 80,
-    marginBottom: 5,
-  },
-  score: {
-    color: "#fff",
-    fontSize: 22,
-    fontWeight: "bold",
-    width: 70,
-    textAlign: "center",
-  },
-  errorText: {
-    color: "red",
-    fontSize: 16,
-  },
-  flatListContent: {
-    paddingBottom: 20,
-  },
-  navbar: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#7D7875",
-    padding: 10,
-  },
+  // ... other styles ...
   orangeBar: {
     height: 4,
     backgroundColor: "#F55900",

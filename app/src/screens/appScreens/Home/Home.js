@@ -18,7 +18,7 @@ import Navbar from '../../../components/Navbar'; // Importando a Navbar
 const api = axios.create({
   baseURL: "https://api-basketball.p.rapidapi.com",
   headers: {
-    "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f", // Substitua pela sua chave de API
+    "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
     "x-rapidapi-host": "api-basketball.p.rapidapi.com",
     "Accept": "application/json",
   },
@@ -29,7 +29,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredTeams, setFilteredTeams] = useState([]); // Estado para os times filtrados
+  const [filteredTeams, setFilteredTeams] = useState([]);
   const [activeConference, setActiveConference] = useState("Leste");
 
   const fetchNBAStandings = async () => {
@@ -69,7 +69,7 @@ const Home = () => {
 
   useEffect(() => {
     fetchNBAStandings();
-  }, []); // O useEffect só deve ser chamado uma vez na montagem do componente
+  }, []);
 
   const handleRetry = () => {
     fetchNBAStandings();
@@ -89,8 +89,8 @@ const Home = () => {
   const filterTeamsByConference = (conference) => {
     return teams.filter(team => 
       (conference === "Leste" 
-        ? easternTeamsNames.some(name => team.team?.name?.includes(name))
-        : westernTeamsNames.some(name => team.team?.name?.includes(name))
+        ? easternTeamsNames.some(name => team.team?.name.includes(name))
+        : westernTeamsNames.some(name => team.team?.name.includes(name))
       )
     );
   };
@@ -117,7 +117,7 @@ const Home = () => {
             <Text style={styles.positionText}>{index + 1}</Text>
             <Image
               source={{ uri: item.team.logo || 'url_da_imagem_padrao' }}
-              style={[styles.teamLogo, item.team.name.includes("Clippers") ? styles.clippersLogo : null]} // Adiciona uma classe específica para os Clippers
+              style={[styles.teamLogo, item.team.name.includes("Clippers") ? styles.clippersLogo : null]}
               resizeMode="contain"
             />
             <Text style={styles.teamName}>{item.team.name}</Text>
@@ -131,6 +131,15 @@ const Home = () => {
         contentContainerStyle={styles.flatListContent}
       />
     );
+  };
+
+  const handleSearchChange = (term) => {
+    setSearchTerm(term);
+    const teamsForActiveConference = filterTeamsByConference(activeConference);
+    const filtered = teamsForActiveConference.filter((team) =>
+      team.team?.name.toLowerCase().includes(term.toLowerCase())
+    );
+    setFilteredTeams(filtered);
   };
 
   if (loading) {
@@ -157,9 +166,8 @@ const Home = () => {
     <SafeAreaView style={styles.container}>
       <Navbar 
         searchTerm={searchTerm} 
-        setSearchTerm={setSearchTerm} 
+        setSearchTerm={handleSearchChange} // Usa a nova função de busca
         teams={teams} 
-        setFilteredTeams={setFilteredTeams} // Adiciona setFilteredTeams
       />
       
       <View style={styles.pickerContainer}>
@@ -209,9 +217,9 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   clippersLogo: {
-    width: 80, // Aumenta a largura da logo do Clippers
-    height: 80, // Aumenta a altura da logo do Clippers
-    shadowColor: '#000', // Adiciona sombra
+    width: 80,
+    height: 80,
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 1,
