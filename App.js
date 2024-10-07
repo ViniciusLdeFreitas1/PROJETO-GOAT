@@ -5,13 +5,14 @@ import { StatusBar } from 'react-native';
 import 'react-native-gesture-handler';
 import fonts from './app/src/config/fonts';
 import Routes from './app/src/routes/Routes';
-import { UserProvider } from './app/src/components/UserContext'; // Importando o UserProvider
+import { UserProvider } from './app/src/components/UserContext';
+import Toast from 'react-native-toast-message';
 
 export default function App() {
-    const [fontsLoaded] = useFonts(fonts); // Carregando fontes
+    const [fontsLoaded] = useFonts(fonts);
 
     if (!fontsLoaded) {
-        return null; // Exibe null enquanto as fontes não estão carregadas
+        return null;
     }
 
     return (
@@ -20,6 +21,7 @@ export default function App() {
             <UserProvider>
                 <NavigationContainer>
                     <Routes />
+                    <Toast />
                 </NavigationContainer>
             </UserProvider>
         </>

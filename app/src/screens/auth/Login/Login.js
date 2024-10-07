@@ -12,7 +12,7 @@ import {
 import { FontAwesome } from "@expo/vector-icons";
 import { auth } from "../../../config/firebaseConfig";
 import Fonts from "../../../utils/Fonts";
-import firebase from "firebase/compat/app";
+import Toast from "react-native-toast-message";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState("");
@@ -39,21 +39,35 @@ export default function Login({ navigation }) {
   };
 
   const handleLogin = () => {
-    if (validate()) {
-      signInWithEmailAndPassword(auth, email, password)
-        .then((userCredential) => {
-          const user = userCredential.user;
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        if (user.emailVerified) {
           console.log(user);
           setEmail("");
           setPassword("");
-          Alert.alert("Login bem-sucedido");
+          Toast.show({
+            type: 'success',
+            text1: 'Login bem-sucedido',
+            text2: 'Bem-vindo de volta!',
+          });
           navigation.navigate("RoutesTab");
-        })
-        .catch((error) => {
-          const errorMessage = error.message;
-          Alert.alert("Erro", errorMessage);
+        } else {
+          Toast.show({
+            type: 'error',
+            text1: 'Erro',
+            text2: 'Seu e-mail ainda não foi verificado. Por favor, verifique seu e-mail antes de fazer login.',
+          });
+        }
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        Toast.show({
+          type: 'error',
+          text1: 'Erro',
+          text2: errorMessage,
         });
-    }
+      });
   };
 
   return (

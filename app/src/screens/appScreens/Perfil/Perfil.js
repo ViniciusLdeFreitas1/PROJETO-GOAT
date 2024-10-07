@@ -15,61 +15,80 @@ import { FontAwesome } from "@expo/vector-icons";
 import { useUser } from "../../../components/UserContext";
 import goatlogo from "../../../../../assets/goatlogo.png";
 import axios from "axios";
+import { db } from "../../../config/firebaseConfig"; // Ensure this import is correct
+import { onSnapshot, doc } from "firebase/firestore"; // Import doc to fetch specific user
 
 export default function Perfil({ navigation }) {
   const { userData, updateUserData } = useUser();
   const [profileImage, setProfileImage] = useState(userData.profileImage || "");
   const [favoriteTeams, setFavoriteTeams] = useState([]);
+  const [nomeUser, setNomeUser] = useState('');
+  const [emailUser, setEmailUser] = useState('');
 
   useEffect(() => {
     (async () => {
-      const { status } =
-        await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert(
-          "Permissão necessária",
-          "Precisamos de acesso à sua galeria."
-        );
+        Alert.alert("Permissão necessária", "Precisamos de acesso à sua galeria.");
       }
     })();
 
-    const loadFavorites = async () => {
-      const storedFavorites = await AsyncStorage.getItem("favoriteTeams");
-      if (storedFavorites) {
-        const favoriteIds = JSON.parse(storedFavorites);
-        console.log("Favorite IDs recuperados:", favoriteIds); // Verifique os favoritos recuperados
-
-        // Buscando dados da API
-        const options = {
-          method: "GET",
-          url: "https://api-basketball.p.rapidapi.com/teams",
-          params: {
-            league: "12",
-            season: "2023-2024",
-          },
-          headers: {
-            "x-rapidapi-key":
-              "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
-            "x-rapidapi-host": "api-basketball.p.rapidapi.com",
-          },
-        };
-
-        try {
-          const response = await axios.request(options);
-          const allTeams = response.data.response;
-
-          const favoriteTeamsList = allTeams.filter((team) =>
-            favoriteIds.includes(team.id)
-          );
-          setFavoriteTeams(favoriteTeamsList);
-        } catch (error) {
-          console.error("Erro ao buscar times:", error);
-        }
+    const fetchUserData = async () => {
+      const user = auth.currentUser; // Ensure `auth` is defined and imported
+      if (user) {
+        const userDoc = doc(db, "Users", user.uid);
+        const unsubscribe = onSnapshot(userDoc, (doc) => {
+          if (doc.exists()) {
+            const userData = doc.data();
+            setNomeUser(userData.nome || ''); // Fallback in case nome is undefined
+            setEmailUser(userData.email || ''); // Fallback in case email is undefined
+          } else {
+            console.log("No such document!");
+          }
+        });
+        return () => unsubscribe();
       }
     };
 
+    fetchUserData();
+  }, []); // Removed the nested useEffect
+
+  const loadFavorites = async () => {
+    const storedFavorites = await AsyncStorage.getItem("favoriteTeams");
+    if (storedFavorites) {
+      const favoriteIds = JSON.parse(storedFavorites);
+      console.log("Favorite IDs recuperados:", favoriteIds);
+
+      const options = {
+        method: "GET",
+        url: "https://api-basketball.p.rapidapi.com/teams",
+        params: {
+          league: "12",
+          season: "2023-2024",
+        },
+        headers: {
+          "x-rapidapi-key": "YOUR_API_KEY", // Replace with your API key
+          "x-rapidapi-host": "api-basketball.p.rapidapi.com",
+        },
+      };
+
+      try {
+        const response = await axios.request(options);
+        const allTeams = response.data.response;
+
+        const favoriteTeamsList = allTeams.filter((team) =>
+          favoriteIds.includes(team.id)
+        );
+        setFavoriteTeams(favoriteTeamsList);
+      } catch (error) {
+        console.error("Erro ao buscar times:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
     loadFavorites();
-  }, []);
+  }, []); // Make sure loadFavorites is called once on mount
 
   const pickImage = async () => {
     try {
@@ -90,7 +109,7 @@ export default function Perfil({ navigation }) {
       Alert.alert("Erro", "Falha ao selecionar a imagem.");
     }
   };
-
+  
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -105,7 +124,8 @@ export default function Perfil({ navigation }) {
               <Image source={goatlogo} style={styles.placeholder} />
             )}
           </TouchableOpacity>
-          <Text style={styles.profileName}>{userData.username}</Text>
+          <Text style={styles.profileName}>{nomeUser}</Text>
+          <Text style={styles.profileEmail}>{emailUser}</Text>
         </View>
         <View style={styles.FavoriteContainer}>
           <Text style={styles.header}>Favorite Teams</Text>

@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import React, { useState, useEffect } from 'react';
 import {
@@ -124,7 +124,7 @@ export default function Component({ navigation }) {
                     const user = userCredential.user;
                     const userId = user.uid;
                     await setDoc(doc(db, "Users", userId), {
-                        nome: username, // Armazenando o nome de usuário
+                        nome: username,
                         email: email,
                         senha: password,
                     });
@@ -132,7 +132,18 @@ export default function Component({ navigation }) {
                     setEmail('');
                     setPassword('');
                     setConfirmPassword('');
-                    navigation.navigate('Login');
+                    navigation.navigate('Login')
+                    sendEmailVerification(auth.currentUser)
+                        .then(() => {
+                            Toast.show({
+                                type: 'success',
+                                text1: 'Verifique seu Email',
+                                text2: 'Por favor verifique seu email para poder continuar!',
+                            });
+                        })
+                        .catch((error) => {
+                            console.error("Erro ao enviar email de verificação:", error);
+                        });
                 })
                 .catch((error) => {
                     const errorMessage = error.message;
