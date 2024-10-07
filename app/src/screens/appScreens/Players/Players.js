@@ -8,10 +8,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  SafeAreaView
+  SafeAreaView,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const NBA_Teams = () => {
   const [teams, setTeams] = useState([]);
@@ -19,6 +21,7 @@ const NBA_Teams = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
+  const [favorites, setFavorites] = useState([]);
 
   const navigation = useNavigation();
 
@@ -32,7 +35,8 @@ const NBA_Teams = () => {
           season: "2023-2024",
         },
         headers: {
-          "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
+          "x-rapidapi-key":
+            "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
           "x-rapidapi-host": "api-basketball.p.rapidapi.com",
         },
       };
@@ -41,9 +45,8 @@ const NBA_Teams = () => {
         const response = await axios.request(options);
         const allTeams = response.data.response;
 
-        // Filtrando para remover "West" e "East"
-        const filteredTeams = allTeams.filter((team) =>
-          team.name !== "West" && team.name !== "East"
+        const filteredTeams = allTeams.filter(
+          (team) => team.name !== "West" && team.name !== "East"
         );
 
         setTeams(filteredTeams);
@@ -53,6 +56,7 @@ const NBA_Teams = () => {
         setError("Erro ao buscar os times da NBA");
         setLoading(false);
       }
+
     };
 
     fetchNBATeams();
@@ -64,6 +68,20 @@ const NBA_Teams = () => {
       team.name.toLowerCase().includes(text.toLowerCase())
     );
     setFilteredTeams(filtered);
+  };
+  const toggleFavorite = async (teamId) => {
+    let updatedFavorites = [];
+    if (favorites.includes(teamId)) {
+      updatedFavorites = favorites.filter((id) => id !== teamId);
+    } else {
+      updatedFavorites = [...favorites, teamId];
+    }
+    setFavorites(updatedFavorites);
+    await AsyncStorage.setItem(
+      "favoriteTeams",
+      JSON.stringify(updatedFavorites)
+    );
+     console.log("Favorites salvos:", updatedFavorites);
   };
 
   if (loading) {
@@ -90,18 +108,32 @@ const NBA_Teams = () => {
         data={filteredTeams}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            onPress={() =>
-              navigation.navigate("TeamDetails", { teamId: item.id })
-            }
-            style={styles.teamCard}
-          >
-            <Image source={{ uri: item.logo }} style={styles.logo} resizeMode="contain" />
-            <Text style={styles.teamName}>{item.name}</Text>
-          </TouchableOpacity>
+          <View style={styles.teamCard}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("TeamDetails", { teamId: item.id })
+              }
+              style={styles.teamInfo}
+            >
+              <Image
+                source={{ uri: item.logo }}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <Text style={styles.teamName}>{item.name}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
+              <Icon
+                name={favorites.includes(item.id) ? "heart" : "heart-o"}
+                size={24}
+                color={favorites.includes(item.id) ? "red" : "gray"}
+                style={styles.favoriteIcon}
+              />
+            </TouchableOpacity>
+          </View>
         )}
         contentContainerStyle={styles.listContent}
-        ListFooterComponent={<View style={styles.footerSpace} />} // Adiciona espaço na parte inferior
+        ListFooterComponent={<View style={styles.footerSpace} />}
       />
     </SafeAreaView>
   );
@@ -136,33 +168,37 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#444",
     borderRadius: 10,
+    justifyContent: "space-between",
     padding: 15,
     marginVertical: 10,
-    elevation: 3, // Adiciona sombra ao cartão
-    width: '100%',
+    elevation: 3, 
+    width: "100%",
   },
   listContent: {
-    paddingBottom: 20, // Espaço inferior da lista
+    paddingBottom: 20, 
   },
   footerSpace: {
-    height: 50, // Espaço adicional na parte inferior
+    height: 50,
   },
   teamName: {
     fontSize: 18,
     marginLeft: 15,
     fontWeight: "bold",
     color: "#fff",
-    flex: 1, // Permite que o nome do time ocupe o espaço disponível
+    flex: 1, 
   },
   logo: {
     width: 60,
     height: 60,
-    borderRadius: 5, // Adiciona borda arredondada à imagem do logo
+    borderRadius: 5, 
   },
   errorText: {
     color: "red",
     fontSize: 18,
   },
+  favoriteIcon: {
+    justifyContent: "flex-end"  
+  }
 });
 
 export default NBA_Teams;
