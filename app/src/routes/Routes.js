@@ -15,6 +15,7 @@ import RecuperarSenha from '../screens/auth/Login/RecuperarSenha/RecuperarSenha'
 import Splash from '../screens/splashScreens/Splash/Splash';
 import Fonts from '../utils/Fonts';
 import Seasons from '../screens/appScreens/Temporadas/seasons';
+import TeamDetails from "../screens/appScreens/Players/Teams/TeamDetails"
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -29,6 +30,7 @@ export default function Routes() {
             <Stack.Screen name="RecuperarSenha" component={RecuperarSenha} />
             <Stack.Screen name="RoutesTab" component={RoutesTab} />
             <Stack.Screen name="Temporadas" component={Seasons}/>
+            <Stack.Screen name="TeamDetails" component={TeamDetails}/>
 
          <Stack.Navigator/>
     );
