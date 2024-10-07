@@ -30,7 +30,7 @@ export default function Routes() {
             <Stack.Screen name="RoutesTab" component={RoutesTab} />
             <Stack.Screen name="Temporadas" component={Seasons}/>
 
-        </Stack.Navigator>
+         <Stack.Navigator/>
     );
 }
 

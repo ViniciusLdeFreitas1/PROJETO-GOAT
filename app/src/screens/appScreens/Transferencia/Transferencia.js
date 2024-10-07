@@ -10,44 +10,32 @@ const api = axios.create({
   },
 });
 
-const fetchOdds = async () => {
+// Função para buscar jogadores em vez de odds
+const fetchPlayers = async () => {
   try {
-    const response2023 = await api.get("/odds", {
+    const response = await api.get("/players", {
       params: {
-        league: 12,
-        season: "2023-2024",
-        bet: "1",
-        bookmakers: "31",
+        league: 12, // ajuste o parâmetro conforme necessário
       },
     });
-
-    const response2024 = await api.get("/odds", {
-      params: {
-        league: 12,
-        season: "2024-2025",
-        bet: "1",
-        bookmakers: "31",
-      },
-    });
-
-    return [...response2023.data.response, ...response2024.data.response];
+    return response.data.response;
   } catch (error) {
-    console.error("Falha ao buscar as odds", error);
+    console.error("Falha ao buscar os jogadores", error);
     throw error;
   }
 };
 
-export default function Odds() {
-  const [odds, setOdds] = useState([]);
+export default function Players() {
+  const [players, setPlayers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    const getOdds = async () => {
+    const getPlayers = async () => {
       try {
-        const oddsData = await fetchOdds();
-        setOdds(oddsData);
+        const playersData = await fetchPlayers();
+        setPlayers(playersData);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -55,11 +43,12 @@ export default function Odds() {
       }
     };
 
-    getOdds();
+    getPlayers();
   }, []);
 
-  const filteredOdds = odds.filter(odd => {
-    return odd.bet_name && odd.bet_name.toLowerCase().includes(searchTerm.toLowerCase());
+  // Filtra os jogadores com base no termo de busca
+  const filteredPlayers = players.filter(player => {
+    return player.name && player.name.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
   if (loading) {
@@ -84,7 +73,7 @@ export default function Odds() {
       <View style={styles.navbar}>
         <TextInput
           style={styles.searchInput}
-          placeholder="Buscar odds..."
+          placeholder="Buscar jogadores..."
           value={searchTerm}
           onChangeText={setSearchTerm}
           placeholderTextColor="#fff"
@@ -92,13 +81,13 @@ export default function Odds() {
       </View>
       <View style={styles.orangeBar} />
       <FlatList
-        data={filteredOdds}
+        data={filteredPlayers}
         keyExtractor={(item) => item.id.toString()} // Ajuste conforme necessário
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Text>Casa: {item.bookmaker_name || 'Desconhecido'}</Text>
-            <Text>Aposta: {item.bet_name || 'Desconhecida'}</Text>
-            <Text>Odds: {item.odds || 'N/A'}</Text>
+            <Text>Nome: {item.name || 'Desconhecido'}</Text>
+            <Text>Time: {item.team || 'Desconhecido'}</Text>
+            <Text>Pontos: {item.points || 'N/A'}</Text>
           </View>
         )}
         contentContainerStyle={styles.flatListContent}

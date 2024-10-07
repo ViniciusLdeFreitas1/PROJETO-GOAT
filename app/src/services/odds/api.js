@@ -8,20 +8,19 @@ const api = axios.create({
   },
 });
 
-const fetchOdds = async () => {
+// Função para buscar jogadores
+const fetchPlayers = async () => {
   try {
-    const response = await api.get("/odds", {
+    const response = await api.get("/players", {
       params: {
-        league: 12,
-        season: "2023-2024",
-        bet: "1",
-        bookmakers: "31",
+        league: 12, 
+        season: 2023-2024,
       },
     });
     console.log(response.data); // Verifique a resposta
   } catch (error) {
-    console.error("Falha ao buscar as odds", error.message);
+    console.error("Falha ao buscar os jogadores", error.message);
   }
 };
 
-fetchOdds();
+fetchPlayers();
