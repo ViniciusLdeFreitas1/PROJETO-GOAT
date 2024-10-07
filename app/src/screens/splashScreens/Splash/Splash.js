@@ -37,9 +37,10 @@ const styles = StyleSheet.create({
         width: 500,
         height: 500,
         resizeMode: 'contain',
+        marginBottom: '100px',
     },
     loader: {
         position: 'absolute',
-        bottom: 190,
+        bottom: 130,
     },
 });

@@ -32,7 +32,7 @@ export default function Routes() {
             <Stack.Screen name="Temporadas" component={Seasons}/>
             <Stack.Screen name="TeamDetails" component={TeamDetails}/>
 
-         <Stack.Navigator/>
+         </Stack.Navigator>
     );
 }
 
