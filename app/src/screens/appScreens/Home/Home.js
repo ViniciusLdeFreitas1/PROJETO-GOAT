@@ -29,7 +29,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredTeams, setFilteredTeams] = useState(teams); 
+  const [filteredTeams, setFilteredTeams] = useState([]); 
   const [activeConference, setActiveConference] = useState("Leste");
 
   const fetchNBAStandings = async () => {
@@ -56,7 +56,7 @@ const Home = () => {
       });
 
       setTeams(uniqueTeams);
-      setFilteredTeams(uniqueTeams); 
+      setFilteredTeams(filterTeamsByConference(activeConference, uniqueTeams)); 
       setError("");
     } catch (error) {
       console.error("Erro ao buscar dados:", error);
@@ -86,8 +86,8 @@ const Home = () => {
     "Jazz", "Timberwolves",
   ];
 
-  const filterTeamsByConference = (conference) => {
-    return teams.filter(team => 
+  const filterTeamsByConference = (conference, teamsList) => {
+    return teamsList.filter(team => 
       (conference === "Leste" 
         ? easternTeamsNames.some(name => team.team?.name?.includes(name))
         : westernTeamsNames.some(name => team.team?.name?.includes(name))
@@ -96,21 +96,22 @@ const Home = () => {
   };
 
   useEffect(() => {
-    setFilteredTeams(filterTeamsByConference(activeConference)); 
-  }, [activeConference, teams]);
-
-  const renderTeamList = () => {
-    const filteredTeamsList = filteredTeams.filter((team) =>
+    const filteredByConference = filterTeamsByConference(activeConference, teams);
+    const filteredBySearchTerm = filteredByConference.filter((team) =>
       team.team?.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    if (!filteredTeamsList.length) {
+    setFilteredTeams(filteredBySearchTerm);
+  }, [activeConference, teams, searchTerm]);
+
+  const renderTeamList = () => {
+    if (!filteredTeams.length) {
       return <Text style={styles.emptyText}>Nenhum time encontrado.</Text>;
     }
 
     return (
       <FlatList
-        data={filteredTeamsList}
+        data={filteredTeams}
         keyExtractor={(item) => item.team.id.toString()}
         renderItem={({ item, index }) => (
           <View style={styles.teamRow}>

@@ -17,7 +17,6 @@ import Fonts from '../utils/Fonts';
 import Seasons from '../screens/appScreens/Temporadas/seasons';
 import TeamDetails from "../screens/appScreens/Players/Teams/TeamDetails"
 import Settings from '../screens/appScreens/PerfilConnects/Settings';
-import LeaguesDetails from '../screens/appScreens/Ligas/Leagues/LeaguesDetails';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,7 +33,6 @@ export default function Routes() {
             <Stack.Screen name="Temporadas" component={Seasons} />
             <Stack.Screen name="TeamDetails" component={TeamDetails} />
             <Stack.Screen name="Settings" component={Settings} />
-            <Stack.Screen name="LeaguesDetails" component={LeaguesDetails}/>
 
         </Stack.Navigator>
     );
@@ -105,7 +103,7 @@ function RoutesTab() {
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <AntDesign
-                            name="global"
+                            name="earth"
                             size={22}
                             color={focused ? 'orange' : 'gray'}
                         />

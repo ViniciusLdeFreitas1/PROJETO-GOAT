@@ -49,12 +49,40 @@ export default function Settings({ navigation }) {
 
   const handleSaveEmail = async () => {
     try {
+      // Verifica se o e-mail foi alterado
+      if (email === user.email) {
+        Alert.alert('Nenhuma alteração', 'O e-mail é o mesmo do atual.');
+        return;
+      }
+      
+      // Atualiza o e-mail do usuário
       await updateEmail(auth.currentUser, email);
+      
+      // Atualiza o e-mail no Firestore
+      await updateDoc(userDocRef, {
+        email: email
+      });
+      
       console.log('Email Atualizado com Sucesso');
+      Alert.alert('Sucesso', 'Email atualizado com sucesso!');
     } catch (error) {
-      console.error(error);
+      console.error('Erro ao atualizar o email:', error);
+  
+      let errorMessage = "Erro ao atualizar o e-mail.";
+      
+      // Verifica o tipo de erro e define a mensagem adequada
+      if (error.code === 'auth/invalid-email') {
+        errorMessage = "O e-mail fornecido é inválido.";
+      } else if (error.code === 'auth/email-already-in-use') {
+        errorMessage = "Este e-mail já está em uso por outra conta.";
+      } else if (error.code === 'auth/requires-recent-login') {
+        errorMessage = "Você precisa fazer login novamente para atualizar o e-mail.";
+      }
+  
+      Alert.alert('Erro', errorMessage);
     }
   };
+  
 
   const handleSaveSenha = async () => {
     try {
@@ -127,7 +155,7 @@ export default function Settings({ navigation }) {
         onPress={() => navigation.goBack()}
         style={styles.backButton}
       >
-        <Ionicons name="arrow-back" size={24} color="black" />
+        <Ionicons name="arrow-back" size={24} color="white" />
       </TouchableOpacity>
       <View style={styles.innerContainer}>
         <View style={styles.header}>
@@ -198,14 +226,16 @@ export default function Settings({ navigation }) {
   );
 }
 
+// ... (resto do código)
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#333",
   },
   backButton: {
     position: 'absolute',
-    top: 40,
+    top: 30, // Altere a posição vertical para 20 para mover o botão para cima
     left: 20,
     zIndex: 10,
   },
@@ -220,12 +250,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontFamily: Fonts['poppins-semiBold'],
-    color: '#333',
+    color: '#fff', // Alterado para branco
   },
   subtitle: {
     fontSize: 16,
     fontFamily: Fonts['poppins-regular'],
-    color: '#626262',
+    color: '#fff', // Alterado para branco
   },
   inputContainer: {
     marginBottom: 20,
@@ -253,9 +283,10 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     paddingHorizontal: 10,
+    color: "#F56D09"
   },
   saveButton: {
-    backgroundColor: "#1e90ff",
+    backgroundColor: "#F56D09",
     padding: 10,
     borderRadius: 8,
     marginTop: 20,

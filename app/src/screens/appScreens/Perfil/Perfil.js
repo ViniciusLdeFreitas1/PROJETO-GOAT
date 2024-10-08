@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Alert,
   StyleSheet,
@@ -7,22 +7,17 @@ import {
   View,
   Image,
   ScrollView,
-  FlatList,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
 import { FontAwesome } from "@expo/vector-icons"; // Ícones
 import { useUser } from "../../../components/UserContext";
 import goatlogo from "../../../../../assets/goatlogo.png";
-import axios from "axios";
 import { auth, db } from "../../../config/firebaseConfig";
 import { onSnapshot, doc } from "firebase/firestore";
-import { useFocusEffect } from "@react-navigation/native";
 
 export default function Perfil({ navigation }) {
   const { userData, updateUserData } = useUser();
   const [profileImage, setProfileImage] = useState(userData.profileImage || "");
-  const [favoriteTeams, setFavoriteTeams] = useState([]);
   const [nomeUser, setNomeUser] = useState('');
   const [emailUser, setEmailUser] = useState('');
 
@@ -53,44 +48,6 @@ export default function Perfil({ navigation }) {
 
     fetchUserData();
   }, []);
-
-  const loadFavorites = async () => {
-    const storedFavorites = await AsyncStorage.getItem("favoriteTeams");
-    if (storedFavorites) {
-      const favoriteIds = JSON.parse(storedFavorites);
-
-      const options = {
-        method: "GET",
-        url: "https://api-basketball.p.rapidapi.com/teams",
-        params: {
-          league: "12",
-          season: "2023-2024",
-        },
-        headers: {
-          "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
-          "x-rapidapi-host": "api-basketball.p.rapidapi.com",
-        },
-      };
-
-      try {
-        const response = await axios.request(options);
-        const allTeams = response.data.response;
-
-        const favoriteTeamsList = allTeams.filter((team) =>
-          favoriteIds.includes(team.id)
-        );
-        setFavoriteTeams(favoriteTeamsList);
-      } catch (error) {
-        console.error("Erro ao buscar times:", error);
-      }
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      loadFavorites();
-    }, [])
-  );
 
   const pickImage = async () => {
     try {
@@ -133,29 +90,14 @@ export default function Perfil({ navigation }) {
               <Image source={goatlogo} style={styles.placeholder} />
             )}
           </TouchableOpacity>
-          <Text style={styles.profileName}>{nomeUser}</Text>
-          <Text style={styles.profileEmail}>{emailUser}</Text>
-        </View>
-        <View style={styles.FavoriteContainer}>
-          <Text style={styles.header}>Favorite Teams</Text>
-          {favoriteTeams.length > 0 ? (
-            <FlatList
-              data={favoriteTeams}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <View style={styles.teamCard}>
-                  <Image
-                    source={{ uri: item.logo }}
-                    style={styles.logo}
-                    resizeMode="contain"
-                  />
-                  <Text style={styles.teamName}>{item.name}</Text>
-                </View>
-              )}
-            />
-          ) : (
-            <Text style={styles.noFavorites}>No favorite teams yet.</Text>
-          )}
+          <Text style={styles.label}>Username</Text>
+          <View style={styles.card}>
+            <Text style={[styles.profileText, styles.centeredText]}>{nomeUser}</Text>
+          </View>
+          <Text style={[styles.label, { marginTop: 20 }]}>Email</Text>
+          <View style={styles.card}>
+            <Text style={[styles.profileText, styles.centeredText]}>{emailUser}</Text>
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -166,12 +108,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#333",
-    justifyContent: "center",
   },
   scrollContainer: {
     alignItems: "center",
     padding: 20,
-    paddingTop: 180,
+    paddingTop: 120,
   },
   profile: {
     alignItems: "center",
@@ -180,7 +121,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   profileImage: {
     width: 150,
@@ -193,45 +134,35 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 75,
   },
-  profileName: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 30,
-  },
-  profileEmail: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  teamCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  logo: {
-    width: 50,
-    height: 50,
-    marginRight: 10,
-  },
-  teamName: {
-    fontSize: 18,
-    color: "#fff",
-  },
-  noFavorites: {
-    fontSize: 16,
-    color: "#888",
-  },
-  FavoriteContainer: {
+  card: {
     backgroundColor: "#444",
-    borderRadius: 5,
-    width: 275,
-    height: 175,
+    borderRadius: 8,
+    padding: 15,
+    marginTop: 10,
+    width: 250,
+    alignItems: "center",
+  },
+  profileText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  centeredText: {
+    textAlign: 'center', // Adiciona centralização ao texto
   },
   settingsButton: {
     position: "absolute",
-    top: 50,
+    top: 40,
     right: 20,
     zIndex: 1,
   },
+  label: {
+    color: "#fff",
+    fontSize: 16,
+    alignSelf: "flex-start",
+    marginLeft: 80,
+    marginBottom: 5,
+    alignItems: 'center',
+  },
+
 });
