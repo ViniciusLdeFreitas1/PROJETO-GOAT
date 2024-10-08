@@ -6,7 +6,7 @@ import { StyleSheet } from 'react-native';
 
 import Home from '../screens/appScreens/Home/Home';
 import Perfil from '../screens/appScreens/Perfil/Perfil';
-import Players from '../screens/appScreens/Players/Players';
+import NBA_Teams from '../screens/appScreens/Times/Teams';
 import Jogos from '../screens/appScreens/Jogos/Jogos';
 import Transferencia from '../screens/appScreens/Transferencia/Transferencia';
 import Cadastro from '../screens/auth/Cadastro/Cadastro';
@@ -81,8 +81,8 @@ function RoutesTab() {
                         />
                     ),
                 }}
-                name="Players"
-                component={Players}
+                name="Times"
+                component={NBA_Teams}
             />
             <Tab.Screen
                 name="Jogos"
