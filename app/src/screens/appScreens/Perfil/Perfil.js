@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Alert,
   StyleSheet,
@@ -11,12 +11,13 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "expo-image-picker";
-import { FontAwesome } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons"; // Ícones
 import { useUser } from "../../../components/UserContext";
 import goatlogo from "../../../../../assets/goatlogo.png";
 import axios from "axios";
-import { db } from "../../../config/firebaseConfig"; // Ensure this import is correct
-import { onSnapshot, doc } from "firebase/firestore"; // Import doc to fetch specific user
+import { auth, db } from "../../../config/firebaseConfig";
+import { onSnapshot, doc } from "firebase/firestore";
+import { useFocusEffect } from "@react-navigation/native";
 
 export default function Perfil({ navigation }) {
   const { userData, updateUserData } = useUser();
@@ -34,14 +35,14 @@ export default function Perfil({ navigation }) {
     })();
 
     const fetchUserData = async () => {
-      const user = auth.currentUser; // Ensure `auth` is defined and imported
+      const user = auth.currentUser;
       if (user) {
         const userDoc = doc(db, "Users", user.uid);
         const unsubscribe = onSnapshot(userDoc, (doc) => {
           if (doc.exists()) {
             const userData = doc.data();
-            setNomeUser(userData.nome || ''); // Fallback in case nome is undefined
-            setEmailUser(userData.email || ''); // Fallback in case email is undefined
+            setNomeUser(userData.nome || '');
+            setEmailUser(userData.email || '');
           } else {
             console.log("No such document!");
           }
@@ -51,13 +52,12 @@ export default function Perfil({ navigation }) {
     };
 
     fetchUserData();
-  }, []); // Removed the nested useEffect
+  }, []);
 
   const loadFavorites = async () => {
     const storedFavorites = await AsyncStorage.getItem("favoriteTeams");
     if (storedFavorites) {
       const favoriteIds = JSON.parse(storedFavorites);
-      console.log("Favorite IDs recuperados:", favoriteIds);
 
       const options = {
         method: "GET",
@@ -67,7 +67,7 @@ export default function Perfil({ navigation }) {
           season: "2023-2024",
         },
         headers: {
-          "x-rapidapi-key": "YOUR_API_KEY", // Replace with your API key
+          "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
           "x-rapidapi-host": "api-basketball.p.rapidapi.com",
         },
       };
@@ -86,9 +86,11 @@ export default function Perfil({ navigation }) {
     }
   };
 
-  useEffect(() => {
-    loadFavorites();
-  }, []); // Make sure loadFavorites is called once on mount
+  useFocusEffect(
+    useCallback(() => {
+      loadFavorites();
+    }, [])
+  );
 
   const pickImage = async () => {
     try {
@@ -109,9 +111,16 @@ export default function Perfil({ navigation }) {
       Alert.alert("Erro", "Falha ao selecionar a imagem.");
     }
   };
-  
+
+  const goToSettings = () => {
+    navigation.navigate("Settings");
+  };
+
   return (
     <View style={styles.container}>
+      <TouchableOpacity style={styles.settingsButton} onPress={goToSettings}>
+        <FontAwesome name="cog" size={24} color="#fff" />
+      </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.profile}>
           <TouchableOpacity onPress={pickImage} style={styles.imageContainer}>
@@ -136,7 +145,7 @@ export default function Perfil({ navigation }) {
               renderItem={({ item }) => (
                 <View style={styles.teamCard}>
                   <Image
-                    source={{ uri: item.logo }} // Agora estamos buscando a logo da API
+                    source={{ uri: item.logo }}
                     style={styles.logo}
                     resizeMode="contain"
                   />
@@ -188,24 +197,12 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 24,
     fontWeight: "bold",
+    marginBottom: 30,
   },
-  actions: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-  },
-  actionButton: {
-    padding: 10,
-    alignItems: "center",
-    marginHorizontal: 10,
-  },
-  card: {
-    backgroundColor: "#7D7875",
-    padding: 15,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    marginLeft: 10,
+  profileEmail: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
   teamCard: {
     flexDirection: "row",
@@ -229,6 +226,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#444",
     borderRadius: 5,
     width: 275,
-    height: 175
-  }
+    height: 175,
+  },
+  settingsButton: {
+    position: "absolute",
+    top: 50,
+    right: 20,
+    zIndex: 1,
+  },
 });
