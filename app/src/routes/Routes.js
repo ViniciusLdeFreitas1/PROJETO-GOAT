@@ -8,7 +8,7 @@ import Home from '../screens/appScreens/Home/Home';
 import Perfil from '../screens/appScreens/Perfil/Perfil';
 import NBA_Teams from '../screens/appScreens/Times/Teams';
 import Jogos from '../screens/appScreens/Jogos/Jogos';
-import Transferencia from '../screens/appScreens/Transferencia/Transferencia';
+import fetchleagues from '../screens/appScreens/Ligas/Ligas';
 import Cadastro from '../screens/auth/Cadastro/Cadastro';
 import Login from '../screens/auth/Login/Login';
 import RecuperarSenha from '../screens/auth/Login/RecuperarSenha/RecuperarSenha';
@@ -17,6 +17,7 @@ import Fonts from '../utils/Fonts';
 import Seasons from '../screens/appScreens/Temporadas/seasons';
 import TeamDetails from "../screens/appScreens/Players/Teams/TeamDetails"
 import Settings from '../screens/appScreens/PerfilConnects/Settings';
+import LeaguesDetails from '../screens/appScreens/Ligas/Leagues/LeaguesDetails';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -33,6 +34,7 @@ export default function Routes() {
             <Stack.Screen name="Temporadas" component={Seasons} />
             <Stack.Screen name="TeamDetails" component={TeamDetails} />
             <Stack.Screen name="Settings" component={Settings} />
+            <Stack.Screen name="LeaguesDetails" component={LeaguesDetails}/>
 
         </Stack.Navigator>
     );
@@ -98,12 +100,12 @@ function RoutesTab() {
                 }}
             />
             <Tab.Screen
-                name="Transferencia"
-                component={Transferencia}
+                name="Ligas"
+                component={fetchleagues}
                 options={{
                     tabBarIcon: ({ focused }) => (
                         <AntDesign
-                            name="swap"
+                            name="global"
                             size={22}
                             color={focused ? 'orange' : 'gray'}
                         />
