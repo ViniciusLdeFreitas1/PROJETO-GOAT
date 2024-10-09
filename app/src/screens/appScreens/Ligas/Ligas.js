@@ -12,83 +12,164 @@ const api = axios.create({
 });
 
 // Tradução de países para português
+// Tradução de países para português
 const countryTranslations = {
-"Albania": "Albânia",
-    "Germany": "Alemanha",
-    "Angola": "Angola",
-    "Saudi Arabia": "Arábia Saudita",
-    "Argentina": "Argentina",
-    "Armenia": "Armênia",
-    "Asia": "Ásia",
-    "Austria": "Áustria",
-    "Azerbaijan": "Azerbaijão",
-    "Belgium": "Bélgica",
-    "Belarus": "Bielorrússia",
-    "Bosnia": "Bósnia",
-    "Brazil": "Brasil",
-    "Bulgaria": "Bulgária",
-    "Canada": "Canadá",
-    "Chile": "Chile",
-    "China": "China",
-    "South Korea": "Coreia do Sul",
-    "Croatia": "Croácia",
-    "Cuba": "Cuba",
-    "Denmark": "Dinamarca",
-    "Egypt": "Egito",
-    "United Arab Emirates": "Emirados Árabes Unidos",
-    "Slovakia": "Eslováquia",
-    "Slovenia": "Eslovênia",
-    "Spain": "Espanha",
-    "United States": "Estados Unidos",
-    "Estonia": "Estônia",
-    "Philippines": "Filipinas",
-    "Finland": "Finlândia",
-    "France": "França",
-    "Georgia": "Geórgia",
-    "Greece": "Grécia",
-    "Netherlands": "Holanda",
-    "Hungary": "Hungria",
-    "India": "Índia",
-    "Indonesia": "Indonésia",
-    "England": "Inglaterra",
-    "Ireland": "Irlanda",
-    "Iceland": "Islândia",
-    "Israel": "Israel",
-    "Italy": "Itália",
-    "Japan": "Japão",
-    "Kazakhstan": "Cazaquistão",
-    "Kosovo": "Kosovo",
-    "Latvia": "Letônia",
-    "Lebanon": "Líbano",
-    "Lithuania": "Lituânia",
-    "Luxembourg": "Luxemburgo",
-    "North Macedonia": "Macedônia",
-    "Mexico": "México",
-    "Moldova": "Moldávia",
-    "Montenegro": "Montenegro",
-    "Nigeria": "Nigéria",
-    "Norway": "Noruega",
-    "New Zealand": "Nova Zelândia",
-    "Paraguay": "Paraguai",
-    "Peru": "Peru",
-    "Poland": "Polônia",
-    "Portugal": "Portugal",
-    "Qatar": "Qatar",
-    "Czech Republic": "República Checa",
-    "Romania": "Romênia",
-    "Russia": "Rússia",
-    "Serbia": "Sérvia",
-    "Sweden": "Suécia",
-    "Switzerland": "Suíça",
-    "Turkey": "Turquia",
-    "Ukraine": "Ucrânia",
-    "Uruguay": "Uruguai",
-    "Venezuela": "Venezuela",
-    "Vietnam": "Vietnã",
+  "Afghanistan": "Afeganistão",
+  "Albania": "Albânia",
+  "Algeria": "Argélia",
+  "Andorra": "Andorra",
+  "Angola": "Angola",
+  "Argentina": "Argentina",
+  "Armenia": "Armênia",
+  "Australia": "Austrália",
+  "Austria": "Áustria",
+  "Azerbaijan": "Azerbaijão",
+  "Bahamas": "Bahamas",
+  "Bahrain": "Bahrein",
+  "Bangladesh": "Bangladesh",
+  "Belarus": "Bielorrússia",
+  "Belgium": "Bélgica",
+  "Benin": "Benin",
+  "Bolivia": "Bolívia",
+  "Bosnia-and-Herzegovina": "Bósnia e Herzegovina",
+  "Botswana": "Botswana",
+  "Brazil": "Brasil",
+  "Bulgaria": "Bulgária",
+  "Burkina Faso": "Burkina Faso",
+  "Burundi": "Burundi",
+  "Cambodia": "Camboja",
+  "Cameroon": "Camarões",
+  "Canada": "Canadá",
+  "Cape Verde": "Cabo Verde",
+  "Central African Republic": "República Centro-Africana",
+  "Chad": "Chade",
+  "Chile": "Chile",
+  "China": "China",
+  "Colombia": "Colômbia",
+  "Congo": "Congo",
+  "Costa Rica": "Costa Rica",
+  "Croatia": "Croácia",
+  "Cuba": "Cuba",
+  "Cyprus": "Chipre",
+  "Czech Republic": "República Checa",
+  "Denmark": "Dinamarca",
+  "Dominican Republic": "República Dominicana",
+  "DR Congo": "República Democrática do Congo",
+  "Ecuador": "Equador",
+  "Egypt": "Egito",
+  "El Salvador": "El Salvador",
+  "Estonia": "Estônia",
+  "Ethiopia": "Etiópia",
+  "Finland": "Finlândia",
+  "France": "França",
+  "Gabon": "Gabão",
+  "Gambia": "Gâmbia",
+  "Georgia": "Geórgia",
+  "Germany": "Alemanha",
+  "Ghana": "Gana",
+  "Greece": "Grécia",
+  "Guatemala": "Guatemala",
+  "Guinea": "Guiné",
+  "Honduras": "Honduras",
+  "Hong Kong": "Hong Kong",
+  "Hungary": "Hungria",
+  "Iceland": "Islândia",
+  "India": "Índia",
+  "Indonesia": "Indonésia",
+  "Iran": "Irã",
+  "Iraq": "Iraque",
+  "Ireland": "Irlanda",
+  "Israel": "Israel",
+  "Italy": "Itália",
+  "Ivory Coast": "Costa do Marfim",
+  "Jamaica": "Jamaica",
+  "Japan": "Japão",
+  "Jordan": "Jordânia",
+  "Kazakhstan": "Cazaquistão",
+  "Kenya": "Quênia",
+  "Kuwait": "Kuwait",
+  "Kyrgyzstan": "Quirguistão",
+  "Laos": "Laos",
+  "Latvia": "Letônia",
+  "Lebanon": "Líbano",
+  "Lithuania": "Lituânia",
+  "Luxembourg": "Luxemburgo",
+  "Macedonia": "Macedônia",
+  "Madagascar": "Madagascar",
+  "Malaysia": "Malásia",
+  "Mali": "Mali",
+  "Malta": "Malta",
+  "Mauritania": "Mauritânia",
+  "Mexico": "México",
+  "Moldova": "Moldávia",
+  "Mongolia": "Mongólia",
+  "Montenegro": "Montenegro",
+  "Morocco": "Marrocos",
+  "Mozambique": "Moçambique",
+  "Namibia": "Namíbia",
+  "Nepal": "Nepal",
+  "Netherlands": "Países Baixos",
+  "New Zealand": "Nova Zelândia",
+  "Nicaragua": "Nicarágua",
+  "Nigeria": "Nigéria",
+  "Norway": "Noruega",
+  "Oman": "Omã",
+  "Pakistan": "Paquistão",
+  "Palestine": "Palestina",
+  "Panama": "Panamá",
+  "Paraguay": "Paraguai",
+  "Peru": "Peru",
+  "Philippines": "Filipinas",
+  "Poland": "Polônia",
+  "Portugal": "Portugal",
+  "Qatar": "Catar",
+  "Romania": "Romênia",
+  "Russia": "Rússia",
+  "Rwanda": "Ruanda",
+  "Saudi Arabia": "Arábia Saudita",
+  "Senegal": "Senegal",
+  "Serbia": "Sérvia",
+  "Singapore": "Singapura",
+  "Slovakia": "Eslováquia",
+  "Slovenia": "Eslovênia",
+  "South Africa": "África do Sul",
+  "South Korea": "Coreia do Sul",
+  "Spain": "Espanha",
+  "Sri Lanka": "Sri Lanka",
+  "Sudan": "Sudão",
+  "Sweden": "Suécia",
+  "Switzerland": "Suíça",
+  "Syria": "Síria",
+  "Taiwan": "Taiwan",
+  "Tajikistan": "Tajiquistão",
+  "Tanzania": "Tanzânia",
+  "Thailand": "Tailândia",
+  "Togo": "Togo",
+  "Trinidad and Tobago": "Trinidad e Tobago",
+  "Tunisia": "Tunísia",
+  "Turkey": "Turquia",
+  "Uganda": "Uganda",
+  "Ukraine": "Ucrânia",
+  "United Arab Emirates": "Emirados Árabes Unidos",
+  "United Kingdom": "Reino Unido",
+  "USA": "Estados Unidos",
+  "Uruguay": "Uruguai",
+  "Uzbekistan": "Uzbequistão",
+  "Venezuela": "Venezuela",
+  "Vietnam": "Vietnã",
+  "World":  "Mundo",
+  "Zambia": "Zâmbia",
+  "Zimbabwe": "Zimbábue"
 };
+
+const excludedCountries = [
+  "Taiwan", 
+];
+
 
 // Excluir ligas específicas pelo nome
 const excludedLeagues = [
+  "AfroCan",
   "Prvenstvo BiH Women",
   "Czech Cup Women",
   "Suomen Cup",
@@ -98,29 +179,62 @@ const excludedLeagues = [
   "Higher League",
   "National League Women",
   "Division 1",
+  "EASL",
+  "EABA Championship",
   "South American League",
   "Betty Codona Trophy Women",
+  "NBL1 Central Women",
+  "NBL1 East Women",
+  "Libobasquet",
+  "Super League",
+  "Copa Chile",
+  "Supercopa",
+  "LNB",
+  "NBA In-Season Tournament",
+  "Czech-Slovak Cup",
+  "European Challengers U16 Women",
+  "European Challengers U20",
+  "Federal Cup",
+  "Games of the Small States of Europe Women",
+  "LFB Super Cup Women",
+  "Georgian Cup",
+  "Latvian Cup",
+  "Super Cup Women",
+  "Taca de Portugal Women",
+  "Super Cup",
+  "Russian Cup W",
+  "NBL",
+  "South American Championship",
+  "South American Championship U17",
+  "South American Championship U17 Women",
+  "South American Championship Women",
+  "South American Championship U18",
+  "Northern Cup",
   "P.League+",
   "T1 League",
   "Superliga Women",
   "Liga Unike Women",
   "WCBA Women",
+  "Americas Championship U18 Women",
+  "Stankovic Continental Cup",
+  "Universiade",
+  "WBLA Women",
   "Superliga",
   "WASL",
+  "California Classic",
 ];
 
 const fetchLeagues = async () => {
   try {
     const response = await api.get("/leagues", {
-      params: {
-        season: '2023-2024', // Temporada
-      },
+      params: {},
     });
     console.log("Leagues Response:", response.data.response); // Para depuração
 
     const leaguesWithLogos = response.data.response.filter(league => 
       league.logo &&
-      !excludedLeagues.includes(league.name)
+      !excludedLeagues.includes(league.name) &&
+      !excludedCountries.includes(league.country?.name) // Excluir baseando-se no país
     );
     return leaguesWithLogos; // Retorna apenas ligas com logos válidas
   } catch (error) {
@@ -128,6 +242,7 @@ const fetchLeagues = async () => {
     throw error;
   }
 };
+
 
 export default function Leagues() {
   const [leagues, setLeagues] = useState([]);
@@ -150,11 +265,20 @@ export default function Leagues() {
     getLeagues();
   }, []);
 
-  const filteredLeagues = leagues.filter(league => {
-    const leagueName = league.name ? league.name.toLowerCase() : '';
-    const countryName = translateCountry(league.country?.name || '').toLowerCase();
-    return leagueName.includes(searchTerm.toLowerCase()) || countryName.includes(searchTerm.toLowerCase());
+  const filteredLeagues = leagues
+  .filter(league => {
+    const leagueName = league.name ? league.name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "") : '';
+    const countryName = translateCountry(league.country?.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    const normalizedSearchTerm = searchTerm.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    return leagueName.includes(normalizedSearchTerm) || countryName.includes(normalizedSearchTerm);
+  })
+  .sort((a, b) => {
+    const countryA = translateCountry(a.country?.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    const countryB = translateCountry(b.country?.name || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+    return countryA.localeCompare(countryB);
   });
+
+
 
   if (loading) {
     return (
@@ -192,32 +316,31 @@ export default function Leagues() {
           data={filteredLeagues}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
-            <TouchableOpacity onPress={() => navigation.navigate('LeaguesDetails', { league: item })}>
-              <View style={styles.card}>
-                <Image
-                  source={{ uri: item.logo || item.country.flag }} // Exibe a logo ou a bandeira do país
-                  style={styles.leagueLogo}
-                  resizeMode="contain"
-                />
-                <Text style={styles.cardText}>Nome da Liga: {item.name || 'Desconhecido'}</Text>
-                <View style={styles.countryInfo}>
-                  <Text style={styles.cardText}>País: {translateCountry(item.country?.name) || 'Desconhecido'}</Text>
-                  {item.country?.flag && (
-                    <Image
-                      source={{ uri: item.country.flag }}
-                      style={styles.countryFlag}
-                      resizeMode="contain"
-                    />
-                  )}
-                </View>
-                <Text style={styles.cardText}>Tipo: {item.type || 'N/A'}</Text>
-                <Text style={styles.cardText}>Temporada: {item.seasons[0]?.season || 'N/A'}</Text>
+            <View style={styles.card}>
+              <Image
+                source={{ uri: item.logo || item.country.flag }} // Exibe a logo ou a bandeira do país
+                style={styles.leagueLogo}
+                resizeMode="contain"
+              />
+              <Text style={styles.cardText}>Nome da Liga: {item.name || 'Desconhecido'}</Text>
+              <View style={styles.countryInfo}>
+                <Text style={styles.cardText}>País: {translateCountry(item.country?.name) || 'Desconhecido'}</Text>
+                {item.country?.flag && (
+                  <Image
+                    source={{ uri: item.country.flag }}
+                    style={styles.countryFlag}
+                    resizeMode="contain"
+                  />
+                )}
               </View>
-            </TouchableOpacity>
+              <Text style={styles.cardText}>Tipo: {item.type || 'N/A'}</Text>
+            </View>
           )}
           contentContainerStyle={styles.flatListContent}
         />
       )}
+      {/* Espaço extra após a lista */}
+      <View style={{ height: 50 }} /> {/* Aqui você pode ajustar a altura do espaço conforme necessário */}
     </SafeAreaView>
   );
 }
