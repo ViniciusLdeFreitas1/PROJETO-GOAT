@@ -242,7 +242,7 @@ export default function Component({ navigation }) {
                     <Text style={styles.buttonText}>Registrar</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => navigation.navigate(Login)}>
+                <TouchableOpacity onPress={() => navigation.navigate('Login')}>
                     <Text
                         style={styles.linkText}
                     >

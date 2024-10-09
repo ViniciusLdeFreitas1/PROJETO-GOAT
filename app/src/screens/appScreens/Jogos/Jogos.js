@@ -44,7 +44,6 @@ const Times = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [season, setSeason] = useState("2023-2024");
-  const [sortOrder, setSortOrder] = useState("desc");
 
   useEffect(() => {
     const getGames = async () => {
@@ -71,13 +70,7 @@ const Times = () => {
     );
   });
 
-  const sortedGames = filteredGames.sort((a, b) => {
-    const dateA = new Date(a.date);
-    const dateB = new Date(b.date);
-    return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-  });
-
-  const groupedGames = sortedGames.reduce((acc, game) => {
+  const groupedGames = filteredGames.reduce((acc, game) => {
     const date = new Date(game.date).toLocaleDateString();
     if (!acc[date]) {
       acc[date] = [];
@@ -115,65 +108,80 @@ const Times = () => {
         />
       </View>
       <View style={styles.orangeBar} />
-      <Picker
-        selectedValue={season}
-        style={styles.picker}
-        onValueChange={setSeason}
-      >
-        <Picker.Item label="2024-2025" value="2024-2025" />
-        <Picker.Item label="2023-2024" value="2023-2024" />
-        <Picker.Item label="2022-2023" value="2022-2023" />
-      </Picker>
-      <TouchableOpacity
-        onPress={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-        style={styles.order}
-      >
-        <Text style={styles.orderText}>Ordenar</Text>
-      </TouchableOpacity>
-      <FlatList
-        data={Object.keys(groupedGames)}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => (
-          <View>
-            <Text style={styles.dateHeader}>{item}</Text>
-            {groupedGames[item].map((game) => (
-              <View key={game.id} style={styles.card}>
-                <View style={styles.teamContainer}>
-                  <View style={styles.teamInfo}>
-                    <Image
-                      source={{ uri: game.teams.home.logo }}
-                      style={styles.logo}
-                      resizeMode="contain"
-                    />
+
+      {/* Exibe os Pickers apenas se houver jogos filtrados */}
+      {searchTerm && filteredGames.length === 0 ? null : (
+        <>
+          <Picker
+            selectedValue={season}
+            style={styles.picker}
+            onValueChange={setSeason}
+          >
+            <Picker.Item label="2024-2025" value="2024-2025" />
+            <Picker.Item label="2023-2024" value="2023-2024" />
+            <Picker.Item label="2022-2023" value="2022-2023" />
+          </Picker>
+
+          {/* Botão de Ordenar apenas se houver jogos filtrados */}
+          {filteredGames.length > 0 && (
+            <TouchableOpacity
+              onPress={() => {/* lógica para ordenar aqui */}}
+              style={styles.order}
+            >
+              <Text style={styles.orderText}>Ordenar</Text>
+            </TouchableOpacity>
+          )}
+        </>
+      )}
+
+      {searchTerm && filteredGames.length === 0 ? (
+        <Text style={styles.errorText}>Esse time não existe</Text>
+      ) : (
+        <FlatList
+          data={Object.keys(groupedGames)}
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => (
+            <View>
+              <Text style={styles.dateHeader}>{item}</Text>
+              {groupedGames[item].map((game) => (
+                <View key={game.id} style={styles.card}>
+                  <View style={styles.teamContainer}>
+                    <View style={styles.teamInfo}>
+                      <Image
+                        source={{ uri: game.teams.home.logo }}
+                        style={styles.logo}
+                        resizeMode="contain"
+                      />
+                    </View>
+                    <Text style={styles.score}>
+                      {game.scores.home.total} - {game.scores.away.total}
+                    </Text>
+                    <View style={styles.teamInfo}>
+                      <Image
+                        source={{ uri: game.teams.away.logo }}
+                        style={styles.logo}
+                        resizeMode="contain"
+                      />
+                    </View>
                   </View>
-                  <Text style={styles.score}>
-                    {game.scores.home.total} - {game.scores.away.total}
+                  <Text style={styles.statusText}>
+                    Status:{" "}
+                    {game.status.long === "Not Started"
+                      ? "Não começado"
+                      : game.status.long === "Game Finished"
+                      ? "Jogo Finalizado"
+                      : game.status.long}
                   </Text>
-                  <View style={styles.teamInfo}>
-                    <Image
-                      source={{ uri: game.teams.away.logo }}
-                      style={styles.logo}
-                      resizeMode="contain"
-                    />
-                  </View>
+                  <Text style={styles.dateText}>
+                    Data: {new Date(game.date).toLocaleString()}
+                  </Text>
                 </View>
-                <Text style={styles.statusText}>
-                  Status:{" "}
-                  {game.status.long === "Not Started"
-                    ? "Não começado"
-                    : game.status.long === "Game Finished"
-                    ? "Jogo Finalizado"
-                    : game.status.long}
-                </Text>
-                <Text style={styles.dateText}>
-                  Data: {new Date(game.date).toLocaleString()}
-                </Text>
-              </View>
-            ))}
-          </View>
-        )}
-        contentContainerStyle={styles.flatListContent}
-      />
+              ))}
+            </View>
+          )}
+          contentContainerStyle={styles.flatListContent}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -246,6 +254,8 @@ const styles = StyleSheet.create({
   errorText: {
     color: "red",
     fontSize: 16,
+    textAlign: "center",
+    marginTop: 20,
   },
   flatListContent: {
     paddingBottom: 20,

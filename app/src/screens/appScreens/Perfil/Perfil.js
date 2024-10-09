@@ -69,13 +69,9 @@ export default function Perfil({ navigation }) {
     }
   };
 
-  const goToSettings = () => {
-    navigation.navigate("Settings");
-  };
-
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.settingsButton} onPress={goToSettings}>
+      <TouchableOpacity style={styles.settingsButton} onPress={() => navigation.navigate('Settings')}>
         <FontAwesome name="cog" size={24} color="#fff" />
       </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollContainer}>

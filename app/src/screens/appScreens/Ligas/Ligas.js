@@ -222,6 +222,8 @@ const excludedLeagues = [
   "Superliga",
   "WASL",
   "California Classic",
+  "BAL",
+  "African Championship",
 ];
 
 const fetchLeagues = async () => {
