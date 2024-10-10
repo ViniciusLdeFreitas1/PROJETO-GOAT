@@ -56,10 +56,22 @@ const NBA_Teams = () => {
         setError("Erro ao buscar os times da NBA");
         setLoading(false);
       }
+    };
 
+    // Função para carregar favoritos do AsyncStorage
+    const loadFavorites = async () => {
+      try {
+        const savedFavorites = await AsyncStorage.getItem("favoriteTeams");
+        if (savedFavorites !== null) {
+          setFavorites(JSON.parse(savedFavorites));
+        }
+      } catch (error) {
+        console.log("Erro ao carregar favoritos:", error);
+      }
     };
 
     fetchNBATeams();
+    loadFavorites(); // Carrega os favoritos ao montar o componente
   }, []);
 
   const handleSearch = (text) => {
@@ -69,6 +81,7 @@ const NBA_Teams = () => {
     );
     setFilteredTeams(filtered);
   };
+
   const toggleFavorite = async (teamId) => {
     let updatedFavorites = [];
     if (favorites.includes(teamId)) {
@@ -81,7 +94,7 @@ const NBA_Teams = () => {
       "favoriteTeams",
       JSON.stringify(updatedFavorites)
     );
-     console.log("Favorites salvos:", updatedFavorites);
+    console.log("Favorites salvos:", updatedFavorites);
   };
 
   if (loading) {
@@ -121,6 +134,14 @@ const NBA_Teams = () => {
                 resizeMode="contain"
               />
               <Text style={styles.teamName}>{item.name}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
+              <Icon
+                name={favorites.includes(item.id) ? "heart" : "heart-o"}
+                size={24}
+                color={favorites.includes(item.id) ? "red" : "gray"}
+                style={styles.favoriteIcon}
+              />
             </TouchableOpacity>
           </View>
         )}
@@ -163,11 +184,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 15,
     marginVertical: 10,
-    elevation: 3, 
+    elevation: 3,
     width: "100%",
   },
   listContent: {
-    paddingBottom: 20, 
+    paddingBottom: 20,
   },
   footerSpace: {
     height: 50,
@@ -177,20 +198,20 @@ const styles = StyleSheet.create({
     marginLeft: 15,
     fontWeight: "bold",
     color: "#fff",
-    flex: 1, 
+    flex: 1,
   },
   logo: {
     width: 60,
     height: 60,
-    borderRadius: 5, 
+    borderRadius: 5,
   },
   errorText: {
     color: "red",
     fontSize: 18,
   },
   favoriteIcon: {
-    justifyContent: "flex-end"  
-  }
+    justifyContent: "flex-end",
+  },
 });
 
 export default NBA_Teams;
