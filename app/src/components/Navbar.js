@@ -164,7 +164,7 @@ const styles = StyleSheet.create({
   navbar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#7D7875",
+    backgroundColor: "#222",
     padding: 10,
   },
   profileImage: {
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginHorizontal: 10,
     color: "white",
-    backgroundColor: "#A69F9C",
+    backgroundColor: "#333",
     borderRadius: 5,
   },
   orangeBar: {

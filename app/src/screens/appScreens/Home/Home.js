@@ -190,7 +190,7 @@ const Home = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#181818",
+    backgroundColor: "#333",
     padding: 20,
   },
   teamRow: {
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     height: 50,
     width: '100%',
     color: '#fff',
-    backgroundColor: '#333',
+    backgroundColor: '#222',
   },
   conferenceContainer: {
     flex: 1,

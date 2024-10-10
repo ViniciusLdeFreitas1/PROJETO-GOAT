@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 16,
-        backgroundColor: '#666360',
+        backgroundColor: '#333',
     },
     logo: {
         width: 150,
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     recoverContainer: {
-        backgroundColor: '#868382',
+        backgroundColor: '#222',
         borderRadius: 10,
         padding: 20,
         shadowColor: '#3F3B39',
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     },
     input: {
         height: 50,
-        backgroundColor: '#A59F9D',
+        backgroundColor: '#333',
         borderRadius: 5,
         marginBottom: 20,
         paddingHorizontal: 8,

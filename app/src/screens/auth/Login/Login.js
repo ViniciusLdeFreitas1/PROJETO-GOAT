@@ -154,10 +154,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#666360",
+    backgroundColor: "#333",
   },
   loginContainer: {
-    backgroundColor: "#868382",
+    backgroundColor: "#222",
     borderRadius: 10,
     padding: 20,
     shadowColor: "#595654",
@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
     marginBottom: 22,
-    backgroundColor: "#A59F9D",
+    backgroundColor: "#333",
     borderRadius: 5,
   },
   input: {

@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginHorizontal: 10,
     color: "white",
-    backgroundColor: "#A69F9C",
+    backgroundColor: "#333",
     borderRadius: 5,
     height: 50,
   },
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   navbar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#7D7875",
+    backgroundColor: "#222",
     padding: 10,
   },
   orangeBar: {
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   picker: {
     flex: 1,
     color: "#fff",
-    backgroundColor: "#A69F9C",
+    backgroundColor: "#222",
     marginHorizontal: 10,
     marginTop: 10,
     borderRadius: 5,

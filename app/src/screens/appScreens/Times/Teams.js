@@ -122,14 +122,6 @@ const NBA_Teams = () => {
               />
               <Text style={styles.teamName}>{item.name}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => toggleFavorite(item.id)}>
-              <Icon
-                name={favorites.includes(item.id) ? "heart" : "heart-o"}
-                size={24}
-                color={favorites.includes(item.id) ? "red" : "gray"}
-                style={styles.favoriteIcon}
-              />
-            </TouchableOpacity>
           </View>
         )}
         contentContainerStyle={styles.listContent}
@@ -147,7 +139,7 @@ const styles = StyleSheet.create({
   navbar: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#7D7875",
+    backgroundColor: "#222",
     padding: 10,
     width: "100%",
   },
@@ -155,7 +147,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     borderRadius: 5,
-    backgroundColor: "#444",
+    backgroundColor: "#333",
     color: "#fff",
   },
   orangeBar: {
@@ -166,7 +158,7 @@ const styles = StyleSheet.create({
   teamCard: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#444",
+    backgroundColor: "#222",
     borderRadius: 10,
     justifyContent: "space-between",
     padding: 15,
