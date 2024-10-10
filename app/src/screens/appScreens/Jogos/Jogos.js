@@ -9,9 +9,9 @@ import {
   SafeAreaView,
   Image,
   TextInput,
-  Picker,
   TouchableOpacity,
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import Fonts from "../../../utils/Fonts";
 
 const api = axios.create({
@@ -44,6 +44,7 @@ const Times = () => {
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [season, setSeason] = useState("2023-2024");
+  const [sortOrder, setSortOrder] = useState("desc");
 
   useEffect(() => {
     const getGames = async () => {
@@ -68,6 +69,12 @@ const Times = () => {
       homeName.includes(searchTerm.toLowerCase()) ||
       awayName.includes(searchTerm.toLowerCase())
     );
+  });
+
+  const sortedGames = filteredGames.sort((a, b) => {
+    const dateA = new Date(a.date);
+    const dateB = new Date(b.date);
+    return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
   });
 
   const groupedGames = filteredGames.reduce((acc, game) => {
@@ -125,7 +132,7 @@ const Times = () => {
           {/* Botão de Ordenar apenas se houver jogos filtrados */}
           {filteredGames.length > 0 && (
             <TouchableOpacity
-              onPress={() => {/* lógica para ordenar aqui */}}
+              onPress={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
               style={styles.order}
             >
               <Text style={styles.orderText}>Ordenar</Text>

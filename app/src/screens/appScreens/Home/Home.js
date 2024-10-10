@@ -11,8 +11,8 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Picker,
 } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import Navbar from '../../../components/Navbar'; 
 
 const api = axios.create({
