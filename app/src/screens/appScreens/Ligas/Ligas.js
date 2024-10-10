@@ -341,8 +341,7 @@ export default function Leagues() {
           contentContainerStyle={styles.flatListContent}
         />
       )}
-      {/* Espaço extra após a lista */}
-      <View style={{ height: 50 }} /> {/* Aqui você pode ajustar a altura do espaço conforme necessário */}
+      <View style={{ height: 50 }} /> 
     </SafeAreaView>
   );
 }
@@ -351,12 +350,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: "#333", // Cor do fundo
+    backgroundColor: "#333",
   },
   navbar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#7D7875',
+    backgroundColor: '#222',
     padding: 10,
   },
   searchInput: {
@@ -366,7 +365,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginHorizontal: 10,
     color: 'white',
-    backgroundColor: '#A69F9C',
+    backgroundColor: '#333',
     borderRadius: 5,
     height: 50,
   },
@@ -376,7 +375,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   card: {
-    backgroundColor: "#444",
+    backgroundColor: "#222",
     borderRadius: 10,
     padding: 15,
     marginBottom: 10,
@@ -394,7 +393,7 @@ const styles = StyleSheet.create({
     height: 100,
     alignSelf: "center",
     marginBottom: 10,
-    backgroundColor: "transparent", // Fundo transparente para a logo
+    backgroundColor: "transparent", 
   },
   countryInfo: {
     flexDirection: "row",
@@ -419,7 +418,6 @@ const styles = StyleSheet.create({
   },
 });
 
-// Função para traduzir nomes de países
 const translateCountry = (country) => {
   return countryTranslations[country] || country;
 };

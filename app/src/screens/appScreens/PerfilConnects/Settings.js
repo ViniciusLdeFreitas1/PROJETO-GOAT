@@ -151,7 +151,7 @@ export default function Settings({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#333" }}>
       <TouchableOpacity
         onPress={() => navigation.goBack()}
         style={styles.backButton}
@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     borderWidth: 1,
-    borderColor: "black",
+    borderColor: "white",
     borderRadius: 30,
     justifyContent: "center",
     alignItems: "center",
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
-    color: '#000',
+    color: '#fff',
     fontFamily: Fonts["poppins-bold"],
     marginVertical: 30,
   },
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     maxWidth: "80%",
     textAlign: 'center',
-    color: '#848484',
+    color: '#fff',
   },
   inputContainer: {
     marginVertical: 30,
@@ -268,6 +268,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 10,
     marginVertical: 10,
+    backgroundColor: '#444' 
   },
   passwordContainer: {
     flexDirection: "row",
@@ -295,7 +296,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    backgroundColor: '#fff',
+    backgroundColor: '#fff' ,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     padding: 25,

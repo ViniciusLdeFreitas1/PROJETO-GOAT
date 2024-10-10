@@ -20,6 +20,7 @@ export default function Perfil({ navigation }) {
   const [profileImage, setProfileImage] = useState(userData.profileImage || "");
   const [nomeUser, setNomeUser] = useState('');
   const [emailUser, setEmailUser] = useState('');
+  const [favoriteTeams, setFavoriteTeams] = useState([]);
 
   useEffect(() => {
     (async () => {
@@ -131,11 +132,11 @@ const styles = StyleSheet.create({
     borderRadius: 75,
   },
   card: {
-    backgroundColor: "#444",
+    backgroundColor: "#222",
     borderRadius: 8,
     padding: 15,
     marginTop: 10,
-    width: 250,
+    width: 275,
     alignItems: "center",
   },
   profileText: {
