@@ -314,33 +314,40 @@ export default function Leagues() {
       <View style={styles.orangeBar} />
       {filteredLeagues.length === 0 ? (
         <Text style={{ color: "white", textAlign: "center", marginTop: 20 }}>Nenhum resultado encontrado</Text>
+        
       ) : (
-        <FlatList
-          data={filteredLeagues}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <Image
-                source={{ uri: item.logo || item.country.flag }} // Exibe a logo ou a bandeira do país
-                style={styles.leagueLogo}
-                resizeMode="contain"
-              />
-              <Text style={styles.cardText}>Nome da Liga: {item.name || 'Desconhecido'}</Text>
-              <View style={styles.countryInfo}>
-                <Text style={styles.cardText}>País: {translateCountry(item.country?.name) || 'Desconhecido'}</Text>
-                {item.country?.flag && (
-                  <Image
-                    source={{ uri: item.country.flag }}
-                    style={styles.countryFlag}
-                    resizeMode="contain"
-                  />
-                )}
-              </View>
-              <Text style={styles.cardText}>Tipo: {item.type || 'N/A'}</Text>
-            </View>
-          )}
-          contentContainerStyle={styles.flatListContent}
+        
+<FlatList
+  data={filteredLeagues}
+  keyExtractor={(item) => item.id.toString()}
+  renderItem={({ item }) => (
+    <TouchableOpacity 
+      onPress={() => navigation.navigate('Leagues', { leagueId: item.id, leagueName: item.name })} // Navegação ao clicar
+    >
+      <View style={styles.card}>
+        <Image
+          source={{ uri: item.logo || item.country.flag }} // Exibe a logo ou a bandeira do país
+          style={styles.leagueLogo}
+          resizeMode="contain"
         />
+        <Text style={styles.cardText}>Nome da Liga: {item.name || 'Desconhecido'}</Text>
+        <View style={styles.countryInfo}>
+          <Text style={styles.cardText}>País: {translateCountry(item.country?.name) || 'Desconhecido'}</Text>
+          {item.country?.flag && (
+            <Image
+              source={{ uri: item.country.flag }}
+              style={styles.countryFlag}
+              resizeMode="contain"
+            />
+          )}
+        </View>
+        <Text style={styles.cardText}>Tipo: {item.type || 'N/A'}</Text>
+      </View>
+    </TouchableOpacity>
+  )}
+  contentContainerStyle={styles.flatListContent}
+/>
+
       )}
       <View style={{ height: 50 }} /> 
     </SafeAreaView>

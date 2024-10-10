@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
   FavoriteContainer: {
     backgroundColor: "#444",
     borderRadius: 5,
-    width: 275,
+    width: 320,
     height: 175,
     marginBottom: 20,
     padding: 10,

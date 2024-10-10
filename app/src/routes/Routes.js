@@ -17,6 +17,7 @@ import Fonts from "../utils/Fonts";
 import Seasons from "../screens/appScreens/Temporadas/seasons";
 import TeamDetails from "../screens/appScreens/Times/Teams/TeamDetails";
 import Settings from "../screens/appScreens/PerfilConnects/Settings";
+import Leagues from "../screens/appScreens/Ligas/Leagues/League";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -32,6 +33,7 @@ export default function Routes() {
       <Stack.Screen name="Temporadas" component={Seasons} />
       <Stack.Screen name="TeamDetails" component={TeamDetails} />
       <Stack.Screen name="Settings" component={Settings} />
+      <Stack.Screen name="Leagues" component={Leagues} />
     </Stack.Navigator>
   );
 }
