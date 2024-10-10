@@ -15,7 +15,7 @@ import RecuperarSenha from "../screens/auth/Login/RecuperarSenha/RecuperarSenha"
 import Splash from "../screens/splashScreens/Splash/Splash";
 import Fonts from "../utils/Fonts";
 import Seasons from "../screens/appScreens/Temporadas/seasons";
-import TeamDetails from "../screens//appScreens//Times//Teams";
+import TeamDetails from "../screens/appScreens/Times/Teams/TeamDetails";
 import Settings from "../screens/appScreens/PerfilConnects/Settings";
 
 const Stack = createStackNavigator();
