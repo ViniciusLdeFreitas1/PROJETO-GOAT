@@ -20,67 +20,78 @@ const api = axios.create({
   },
 });
 
+// Função auxiliar para delay
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Função para obter a temporada da liga
 const getSeasonForLeague = (leagueId) => {
-  const leaguesWithMultiYearSeasons = [6, 12, 13, 14, 179, 233];
+  const leaguesWithMultiYearSeasons = [
+    3, 6, 7, 12, 13, 14, 24, 25, 26, 29, 77, 111, 112, 121, 122, 123, 179, 181,
+    183, 189, 233, 247, 306, 308, 314, 316, 317,
+  ];
 
   if (leaguesWithMultiYearSeasons.includes(leagueId)) {
     return "2023-2024";
+  } else {
+    return "2023";
   }
-
-  return "2023";
 };
 
+// Função para buscar times da liga
 const fetchTeamsByLeague = async (leagueId) => {
   let season = getSeasonForLeague(leagueId);
   console.log(`Buscando times para a liga: ${leagueId}, temporada: ${season}`);
 
-  try {
-    const response = await api.get("/teams", {
-      params: {
-        league: leagueId,
-        season: season,
-      },
-    });
+  // Lista de temporadas a serem testadas
+  const seasonsToTry = [
+    "2023-2024",
+    "2023",
+    "2022",
+    "2022-2023",
+    "2021-2022",
+    "2020-2021",
+    "2019",
+    "2018-2019",
+    "2018",
+    "2017",
+    "2016",
+    "2014-2015"
+  ];
 
-    if (response.data.response && response.data.response.length > 0) {
-      console.log("Dados da API:", response.data);
-      return response.data.response;
+  for (let i = 0; i < seasonsToTry.length; i++) {
+    season = seasonsToTry[i];
+    console.log(`Tentando temporada: ${season}`);
+
+    try {
+      const response = await api.get("/teams", {
+        params: {
+          league: leagueId,
+          season: season,
+        },
+      });
+
+      if (response.data.response && response.data.response.length > 0) {
+        console.log("Dados da API:", response.data);
+        return response.data.response;
+      }
+    } catch (error) {
+      console.error(
+        "Falha ao buscar os times da liga",
+        error.response ? error.response.data : error.message
+      );
+
+      // Verificar se o erro é devido ao limite de requisições
+      if (error.response && error.response.status === 429) {
+        console.warn(
+          "Atingido o limite de requisições, esperando para tentar novamente..."
+        );
+        await delay(60000); // Espera 60 segundos antes de tentar novamente
+      }
     }
-
-    if (season === "2023-2024") {
-      season = "2023";
-    } else {
-      season = "2023-2024";
-    }
-
-    console.log(`Tentando novamente com a temporada alternativa: ${season}`);
-
-    const fallbackResponse = await api.get("/teams", {
-      params: {
-        league: leagueId,
-        season: season,
-      },
-    });
-
-    if (
-      fallbackResponse.data.response &&
-      fallbackResponse.data.response.length > 0
-    ) {
-      console.log("Dados alternativos da API:", fallbackResponse.data);
-      return fallbackResponse.data.response;
-    }
-
-    console.warn(
-      `Nenhum time encontrado para a liga: ${leagueId}, temporada: ${season}`
-    );
-    return [];
-  } catch (error) {
-    console.error(
-      "Falha ao buscar os times da liga",
-      error.response ? error.response.data : error.message
-    );
-    throw error;
   }
+
+  console.warn(`Nenhum time encontrado para a liga: ${leagueId}`);
+  return [];
 };
 
 const leaguesToRemove = [

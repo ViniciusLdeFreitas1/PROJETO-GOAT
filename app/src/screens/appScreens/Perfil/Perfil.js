@@ -175,7 +175,6 @@ export default function Perfil({ navigation }) {
             <Text style={styles.noFavorites}>Não há times favoritos.</Text>
           )}
 
-          {/* Botão para recarregar os favoritos */}
           <TouchableOpacity style={styles.reloadButton} onPress={loadFavorites}>
             <Text style={styles.reloadButtonText}>Recarregar Favoritos</Text>
           </TouchableOpacity>
@@ -269,8 +268,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#444",
     borderRadius: 5,
     width: 320,
-    height: 175,
-    marginBottom: 20,
+    height: 275,
+    marginBottom: 60,
     padding: 10,
     alignItems: "center"
   },
