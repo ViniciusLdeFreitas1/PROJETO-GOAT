@@ -120,7 +120,6 @@ const Navbar = ({ searchTerm, setSearchTerm, teams, setFilteredTeams }) => {
 
       <View style={styles.orangeBar} />
 
-      {/* Modal de confirmação de logout */}
       <Modal
         transparent={true}
         visible={logoutModalVisible}
@@ -179,7 +178,7 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     padding: 10,
     marginHorizontal: 10,
-    color: "white",
+    color: "#fff",
     backgroundColor: "#333",
     borderRadius: 5,
   },
