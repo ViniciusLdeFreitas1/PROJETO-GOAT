@@ -1,7 +1,16 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableOpacity, SafeAreaView, Image, ScrollView } from "react-native";
-import { Ionicons } from '@expo/vector-icons';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  FlatList,
+  TouchableOpacity,
+  SafeAreaView,
+  Image,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const api = axios.create({
   baseURL: "https://api-basketball.p.rapidapi.com",
@@ -11,30 +20,69 @@ const api = axios.create({
   },
 });
 
-// Função para buscar todos os times de uma liga específica
+const getSeasonForLeague = (leagueId) => {
+  const leaguesWithMultiYearSeasons = [6, 12, 13, 14, 179, 233];
+
+  if (leaguesWithMultiYearSeasons.includes(leagueId)) {
+    return "2023-2024";
+  }
+
+  return "2023";
+};
+
 const fetchTeamsByLeague = async (leagueId) => {
-  console.log(`Buscando times para a liga: ${leagueId}`);
+  let season = getSeasonForLeague(leagueId);
+  console.log(`Buscando times para a liga: ${leagueId}, temporada: ${season}`);
+
   try {
     const response = await api.get("/teams", {
       params: {
         league: leagueId,
-        season: "2023"
-      }
+        season: season,
+      },
     });
-    console.log("Dados da API:", response.data);
+
     if (response.data.response && response.data.response.length > 0) {
+      console.log("Dados da API:", response.data);
       return response.data.response;
-    } else {
-      console.warn(`Nenhum time encontrado para a liga: ${leagueId}`);
-      return [];
     }
+
+    if (season === "2023-2024") {
+      season = "2023";
+    } else {
+      season = "2023-2024";
+    }
+
+    console.log(`Tentando novamente com a temporada alternativa: ${season}`);
+
+    const fallbackResponse = await api.get("/teams", {
+      params: {
+        league: leagueId,
+        season: season,
+      },
+    });
+
+    if (
+      fallbackResponse.data.response &&
+      fallbackResponse.data.response.length > 0
+    ) {
+      console.log("Dados alternativos da API:", fallbackResponse.data);
+      return fallbackResponse.data.response;
+    }
+
+    console.warn(
+      `Nenhum time encontrado para a liga: ${leagueId}, temporada: ${season}`
+    );
+    return [];
   } catch (error) {
-    console.error("Falha ao buscar os times da liga", error.response ? error.response.data : error.message);
+    console.error(
+      "Falha ao buscar os times da liga",
+      error.response ? error.response.data : error.message
+    );
     throw error;
   }
 };
 
-// Definir ligas a serem removidas
 const leaguesToRemove = [
   "Albania",
   "Asia",
@@ -66,13 +114,14 @@ const leaguesToRemove = [
   "Betty Codona Trophy Women",
   "P.League+",
   "Taiwan",
-  "World"
+  "World",
 ];
 
-// Função para remover ligas indesejadas
 const removeLeagues = (teams) => {
-  return teams.filter(team => {
-    return !leaguesToRemove.includes(team.country && team.country.name ? team.country.name : "");
+  return teams.filter((team) => {
+    return !leaguesToRemove.includes(
+      team.country && team.country.name ? team.country.name : ""
+    );
   });
 };
 
@@ -88,20 +137,21 @@ export default function Teams({ route, navigation }) {
         console.log(`Iniciando a busca por times para a liga: ${leagueId}`);
         const teamsData = await fetchTeamsByLeague(leagueId);
 
-        // Filtrar times não duplicados e válidos
         const uniqueTeams = [];
         const seenIds = new Set();
 
-        teamsData.forEach(item => {
+        teamsData.forEach((item) => {
           if (item && item.id && !seenIds.has(item.id)) {
             seenIds.add(item.id);
             uniqueTeams.push(item);
           }
         });
 
-        // Remover ligas indesejadas
         const filteredTeams = removeLeagues(uniqueTeams);
-        console.log("Times filtrados após remoção de ligas indesejadas:", filteredTeams);
+        console.log(
+          "Times filtrados após remoção de ligas indesejadas:",
+          filteredTeams
+        );
         setTeams(filteredTeams);
       } catch (error) {
         setError("Erro ao buscar os times");
@@ -117,7 +167,7 @@ export default function Teams({ route, navigation }) {
     return (
       <View style={styles.container}>
         <ActivityIndicator size="large" color="#0000ff" />
-        <Text style={{ color: 'white' }}>Carregando...</Text>
+        <Text style={{ color: "white" }}>Carregando...</Text>
       </View>
     );
   }
@@ -134,7 +184,9 @@ export default function Teams({ route, navigation }) {
   if (teams.length === 0) {
     return (
       <View style={styles.container}>
-        <Text style={styles.errorText}>Nenhum time encontrado para esta liga.</Text>
+        <Text style={styles.errorText}>
+          Nenhum time encontrado para esta liga.
+        </Text>
       </View>
     );
   }
@@ -142,33 +194,46 @@ export default function Teams({ route, navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.title}>{leagueName}</Text>
       </View>
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        <FlatList
-          data={teams}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.card}>
-              <TouchableOpacity onPress={() => {
+      <FlatList
+        data={teams}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <TouchableOpacity
+              onPress={() => {
                 console.log(`Navegando para detalhes do time: ${item.id}`);
                 navigation.navigate("TeamDetails", { teamId: item.id });
-              }} style={styles.teamContainer}>
-                <Image source={{ uri: item.logo }} style={styles.logo} resizeMode="contain" />
-                <View style={styles.teamInfo}>
-                  <Text style={styles.cardText}>{item.name}</Text>
-                  <Text style={styles.cardText}>País: {item.country && item.country.name ? item.country.name : "Desconhecido"}</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          )}
-          contentContainerStyle={styles.flatListContent}
-          ListFooterComponent={<View style={{ height: 50 }} />} // Espaço extra de 50 pixels abaixo do último card
-        />
-      </ScrollView>
+              }}
+              style={styles.teamContainer}
+            >
+              <Image
+                source={{ uri: item.logo }}
+                style={styles.logo}
+                resizeMode="contain"
+              />
+              <View style={styles.teamInfo}>
+                <Text style={styles.cardText}>{item.name}</Text>
+                <Text style={styles.cardText}>
+                  País:{" "}
+                  {item.country && item.country.name
+                    ? item.country.name
+                    : "Desconhecido"}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
+        contentContainerStyle={styles.flatListContent}
+        ListFooterComponent={<View style={{ height: 50 }} />}
+      />
     </SafeAreaView>
   );
 }
@@ -180,8 +245,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#333",
   },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 10,
   },
   backButton: {
@@ -192,9 +257,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     flex: 1,
     textAlign: "center",
-  },
-  scrollView: {
-    paddingBottom: 20,
   },
   card: {
     backgroundColor: "#222",
@@ -209,8 +271,8 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   teamContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   teamInfo: {
     flex: 1,
@@ -221,10 +283,5 @@ const styles = StyleSheet.create({
   },
   flatListContent: {
     paddingBottom: 20,
-  },
-  errorText: {
-    color: "red",
-    textAlign: "center",
-    marginTop: 20,
   },
 });

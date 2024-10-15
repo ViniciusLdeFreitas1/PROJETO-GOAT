@@ -163,6 +163,7 @@ const countryTranslations = {
 
 const excludedCountries = [
   "Taiwan", 
+  "Africa"
 ];
 
 
