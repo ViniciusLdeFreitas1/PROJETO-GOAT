@@ -1,12 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableOpacity, SafeAreaView } from "react-native";
+import { StyleSheet, Text, View, ActivityIndicator, FlatList, TouchableOpacity, SafeAreaView, Image, ScrollView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 
 const api = axios.create({
   baseURL: "https://api-basketball.p.rapidapi.com",
   headers: {
-    "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f", // Substitua pelo seu API Key
+    "x-rapidapi-key": "7fa880eb43msh5d32f8e9f689be4p1459efjsn6eb1f0a5d54f",
     "x-rapidapi-host": "api-basketball.p.rapidapi.com",
   },
 });
@@ -16,14 +16,17 @@ const fetchTeamsByLeague = async (leagueId) => {
   console.log(`Buscando times para a liga: ${leagueId}`);
   try {
     const response = await api.get("/teams", {
-      params: { league: leagueId }
+      params: {
+        league: leagueId,
+        season: "2023"
+      }
     });
-    console.log("Dados da API:", response.data); // Log dos dados recebidos
+    console.log("Dados da API:", response.data);
     if (response.data.response && response.data.response.length > 0) {
-      return response.data.response; // Retorna os times da liga se existirem
+      return response.data.response;
     } else {
       console.warn(`Nenhum time encontrado para a liga: ${leagueId}`);
-      return []; // Retorna um array vazio se não houver times
+      return [];
     }
   } catch (error) {
     console.error("Falha ao buscar os times da liga", error.response ? error.response.data : error.message);
@@ -31,8 +34,50 @@ const fetchTeamsByLeague = async (leagueId) => {
   }
 };
 
+// Definir ligas a serem removidas
+const leaguesToRemove = [
+  "Albania",
+  "Asia",
+  "Bosnia Women",
+  "China",
+  "Republica Checa Women",
+  "Europe Women League",
+  "Cup Finlandia",
+  "Grecia Cup Women",
+  "Japão B2",
+  "Cazaquistão Higher",
+  "Cazaquistão Women",
+  "Kosovo Women",
+  "Líbano",
+  "África do Sul",
+  "Taiwan P League",
+  "Taiwan T1 League",
+  "Reino Unido Women",
+  "Prvenstvo BiH Women",
+  "Czech Cup Women",
+  "Suomen Cup",
+  "Suomen Cup Women",
+  "Greek Cup Women",
+  "B2.League",
+  "Higher League",
+  "National League Women",
+  "Division 1",
+  "South American League",
+  "Betty Codona Trophy Women",
+  "P.League+",
+  "Taiwan",
+  "World"
+];
+
+// Função para remover ligas indesejadas
+const removeLeagues = (teams) => {
+  return teams.filter(team => {
+    return !leaguesToRemove.includes(team.country && team.country.name ? team.country.name : "");
+  });
+};
+
 export default function Teams({ route, navigation }) {
-  const { leagueId, leagueName } = route.params; // Ex: leagueId = 'NBB_ID' (substitua pelo ID real)
+  const { leagueId, leagueName } = route.params;
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -42,21 +87,22 @@ export default function Teams({ route, navigation }) {
       try {
         console.log(`Iniciando a busca por times para a liga: ${leagueId}`);
         const teamsData = await fetchTeamsByLeague(leagueId);
-        
+
         // Filtrar times não duplicados e válidos
         const uniqueTeams = [];
         const seenIds = new Set();
 
         teamsData.forEach(item => {
-          if (!seenIds.has(item.id)) {
+          if (item && item.id && !seenIds.has(item.id)) {
             seenIds.add(item.id);
             uniqueTeams.push(item);
           }
         });
 
-        console.log("Times filtrados:", uniqueTeams);
-        
-        setTeams(uniqueTeams);
+        // Remover ligas indesejadas
+        const filteredTeams = removeLeagues(uniqueTeams);
+        console.log("Times filtrados após remoção de ligas indesejadas:", filteredTeams);
+        setTeams(filteredTeams);
       } catch (error) {
         setError("Erro ao buscar os times");
       } finally {
@@ -101,22 +147,28 @@ export default function Teams({ route, navigation }) {
         </TouchableOpacity>
         <Text style={styles.title}>{leagueName}</Text>
       </View>
-      <FlatList
-        data={teams}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.card}>
-            <TouchableOpacity onPress={() => {
-              console.log(`Navegando para detalhes do time: ${item.id}`);
-              navigation.navigate("TeamDetails", { teamId: item.id });
-            }}>
-              <Text style={styles.cardText}>{item.name}</Text>
-              <Text style={styles.cardText}>País: {item.country.name}</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-        contentContainerStyle={styles.flatListContent}
-      />
+      <ScrollView contentContainerStyle={styles.scrollView}>
+        <FlatList
+          data={teams}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.card}>
+              <TouchableOpacity onPress={() => {
+                console.log(`Navegando para detalhes do time: ${item.id}`);
+                navigation.navigate("TeamDetails", { teamId: item.id });
+              }} style={styles.teamContainer}>
+                <Image source={{ uri: item.logo }} style={styles.logo} resizeMode="contain" />
+                <View style={styles.teamInfo}>
+                  <Text style={styles.cardText}>{item.name}</Text>
+                  <Text style={styles.cardText}>País: {item.country && item.country.name ? item.country.name : "Desconhecido"}</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+          )}
+          contentContainerStyle={styles.flatListContent}
+          ListFooterComponent={<View style={{ height: 50 }} />} // Espaço extra de 50 pixels abaixo do último card
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -141,11 +193,27 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: "center",
   },
+  scrollView: {
+    paddingBottom: 20,
+  },
   card: {
     backgroundColor: "#222",
     borderRadius: 10,
     padding: 15,
     marginBottom: 10,
+  },
+  logo: {
+    width: 50,
+    height: 50,
+    borderRadius: 5,
+    marginRight: 10,
+  },
+  teamContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  teamInfo: {
+    flex: 1,
   },
   cardText: {
     color: "white",

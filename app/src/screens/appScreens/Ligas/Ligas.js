@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, ActivityIndicator, FlatList, SafeAreaView, TextInput, Image, TouchableOpacity } from "react-native";
 import { useNavigation } from '@react-navigation/native'; // Importar o hook de navegação
 
+
 const api = axios.create({
   baseURL: "https://api-basketball.p.rapidapi.com",
   headers: {
@@ -11,8 +12,6 @@ const api = axios.create({
   },
 });
 
-// Tradução de países para português
-// Tradução de países para português
 const countryTranslations = {
   "Afghanistan": "Afeganistão",
   "Albania": "Albânia",
@@ -314,6 +313,7 @@ export default function Leagues() {
       <View style={styles.orangeBar} />
       {filteredLeagues.length === 0 ? (
         <Text style={{ color: "white", textAlign: "center", marginTop: 20 }}>Nenhum resultado encontrado</Text>
+        
         
       ) : (
         
