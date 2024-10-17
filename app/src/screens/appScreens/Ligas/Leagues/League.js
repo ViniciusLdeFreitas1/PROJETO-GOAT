@@ -128,10 +128,54 @@ const leaguesToRemove = [
   "World",
 ];
 
+// Lista de times a serem excluídos
+const excludedTeams = [
+  "Basketball Braunschweig",
+  "Bonn",
+  "Chemnitz",
+  "Syntainics MBC",
+  "Ulm",
+  "Vechta",
+  "Wurzburg",
+  "Alba Berlin W",
+  "Halle W",
+  "Keltern W",
+  "Leverkusen W",
+  "Marburg W",
+  "Saarlouis W",
+  "Munster",
+  "Vechta 2",
+  "Bayern 2",
+  "Berlin Braves",
+  "BIS Baskets Speyer",
+  "Breitenguessbach",
+  "Coburg",
+  "Fellbach",
+  "Herford",
+  "Ibbenburg",
+  "Iserlohn",
+  "Leitershofen/Stadtbergen",
+  "Ludwigsburg 2",
+  "Rostock 2",
+  "Ibbenburen",
+  "Al Khaleej",
+  "Al Safa of Safwa",
+  "Al Salam",
+  "Al Taawon",
+  "Dbae",
+  "Indenpendiente de Oliva",
+  "Zarate",
+  // Adicione mais nomes de times que deseja excluir
+];
+
 const removeLeagues = (teams) => {
   return teams.filter((team) => {
-    return !leaguesToRemove.includes(
-      team.country && team.country.name ? team.country.name : ""
+    const countryName = team.country && team.country.name ? team.country.name : "";
+    const teamName = team.name ? team.name : "";
+
+    return (
+      !leaguesToRemove.includes(countryName) &&
+      !excludedTeams.includes(teamName)
     );
   });
 };
@@ -290,6 +334,10 @@ const styles = StyleSheet.create({
   },
   cardText: {
     color: "white",
+    fontSize: 18,
+  },
+  errorText: {
+    color: "red",
     fontSize: 18,
   },
   flatListContent: {

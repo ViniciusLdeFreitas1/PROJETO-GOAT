@@ -13,6 +13,8 @@ const api = axios.create({
 });
 
 const countryTranslations = {
+  "Turkmenistan": "Turquemenistão",
+  "Europe": "Europa",
   "Afghanistan": "Afeganistão",
   "Albania": "Albânia",
   "Algeria": "Argélia",
